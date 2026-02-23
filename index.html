@@ -3,80 +3,201 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BxQuiz - Simple</title>
+  <title>BxQuiz</title>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f0f4f8; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    h1, h2 { text-align: center; color: #2c3e50; }
-    input, button { width: 100%; padding: 14px; margin: 10px 0; font-size: 1.1rem; border-radius: 8px; border: 1px solid #ccc; }
-    button { background: #4CAF50; color: white; border: none; cursor: pointer; }
-    button:disabled { background: #aaa; cursor: not-allowed; }
-    .section { display: none; }
-    .active { display: block; }
-    #qr { text-align: center; margin: 30px 0; }
-    .player { background: #e3f2fd; padding: 10px; margin: 8px 0; border-radius: 8px; }
-    .error { color: red; text-align: center; font-weight: bold; }
+    :root {
+      --primary: #6b46c1;
+      --secondary: #38b2ac;
+      --success: #48bb78;
+      --danger: #f56565;
+    }
+    body { 
+      margin: 0; 
+      font-family: 'Segoe UI', sans-serif; 
+      background: linear-gradient(135deg, #667eea, #764ba2); 
+      color: white; 
+      min-height: 100vh;
+    }
+    .container { 
+      max-width: 700px; 
+      margin: 0 auto; 
+      padding: 20px; 
+    }
+    .card { 
+      background: white; 
+      color: #2d3748; 
+      border-radius: 20px; 
+      padding: 30px; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+      margin: 20px 0;
+    }
+    input, button { 
+      width: 100%; 
+      padding: 16px; 
+      margin: 10px 0; 
+      border-radius: 12px; 
+      border: none; 
+      font-size: 1.1rem; 
+    }
+    input { background: #f7fafc; border: 2px solid #e2e8f0; }
+    button { 
+      background: var(--primary); 
+      color: white; 
+      font-weight: bold; 
+      cursor: pointer; 
+      transition: 0.3s; 
+    }
+    button:hover { transform: scale(1.05); }
+    .btn-green { background: var(--success); }
+    .btn-red { background: var(--danger); }
+    .hidden { display: none !important; }
+    .qr { text-align: center; margin: 30px 0; }
+    .player { 
+      background: #f0fff4; 
+      padding: 12px; 
+      margin: 8px 0; 
+      border-radius: 12px; 
+      font-size: 1.1rem; 
+    }
+    .shop-item { 
+      background: #f7fafc; 
+      padding: 20px; 
+      border-radius: 16px; 
+      text-align: center; 
+      margin: 15px 0; 
+      cursor: pointer; 
+      transition: 0.3s; 
+    }
+    .shop-item:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .roulette { 
+      width: 300px; 
+      height: 300px; 
+      border-radius: 50%; 
+      border: 15px solid #2d3748; 
+      margin: 30px auto; 
+      position: relative; 
+      overflow: hidden; 
+    }
+    .roulette-wheel { 
+      width: 100%; 
+      height: 100%; 
+      border-radius: 50%; 
+      transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); 
+    }
+    .option { 
+      position: absolute; 
+      width: 50%; 
+      height: 50%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-weight: bold; 
+      color: white; 
+      text-align: center; 
+      padding: 10px; 
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- Sección Login / Registro -->
-  <div id="loginSection" class="section active">
-    <h1>BxQuiz</h1>
+  <!-- LOGIN -->
+  <div id="loginScreen" class="card">
+    <h1 style="color:#6b46c1">BxQuiz</h1>
     <input id="email" type="email" placeholder="Email" />
     <input id="password" type="password" placeholder="Contraseña" />
-    <button onclick="login()">Iniciar sesión</button>
-    <button onclick="register()" style="background:#2196F3;">Registrarse</button>
-    <p id="loginError" class="error"></p>
+    <button onclick="login()">Iniciar Sesión</button>
+    <button onclick="register()" class="btn-green">Registrarse</button>
+    <p id="authError" style="color:red; text-align:center;"></p>
   </div>
 
-  <!-- Dashboard -->
-  <div id="dashboardSection" class="section">
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="card hidden">
     <h2>Bienvenido, <span id="userEmail"></span></h2>
-    <button onclick="showCreateQuiz()">Crear Quiz</button>
-    <button onclick="logout()" style="background:#f44336;">Cerrar sesión</button>
+    <button onclick="showCreateQuiz()" style="background:#6b46c1">Crear Quiz</button>
+    <button onclick="showJoinScreen()" style="background:#38b2ac">Unirse por Código</button>
+    <button onclick="showShop()" style="background:#ed8936">Tienda de Sobres</button>
+    <button onclick="logout()" class="btn-red">Cerrar Sesión</button>
   </div>
 
-  <!-- Crear Quiz -->
-  <div id="createQuizSection" class="section">
-    <h2>Crear Quiz</h2>
-    <input id="quizTitle" placeholder="Título del quiz" />
-    <div id="questionsContainer"></div>
-    <button onclick="addQuestion()">+ Añadir pregunta</button>
-    <button onclick="saveQuiz()" style="background:#673AB7;">Guardar y generar código</button>
-    <p id="createError" class="error"></p>
-    <div id="qr" style="display:none;">
-      <h3>Código: <span id="gameCode"></span></h3>
-      <div id="qrcode"></div>
-      <p><a id="joinLink" target="_blank">Enlace para jugadores</a></p>
+  <!-- CREAR QUIZ -->
+  <div id="createQuizScreen" class="card hidden">
+    <h2>Crear Nuevo Quiz</h2>
+    <input id="quizTitle" placeholder="Título del Quiz" />
+    <div id="questionsList"></div>
+    <button onclick="addQuestionField()">+ Añadir Pregunta</button>
+    <button onclick="saveQuiz()" style="background:#48bb78">Guardar y Generar Código</button>
+    <p id="createError" style="color:red"></p>
+    
+    <div id="quizCreated" class="hidden">
+      <h3>Código: <span id="generatedCode" style="color:#e53e3e; font-size:2rem"></span></h3>
+      <div id="qrcode" class="qr"></div>
+      <p><strong>Enlace:</strong> <span id="joinLinkText"></span></p>
     </div>
   </div>
 
-  <!-- Lobby / Juego -->
-  <div id="gameSection" class="section">
-    <h2 id="gameTitle"></h2>
-    <p>Código: <strong id="currentCode"></strong></p>
-    <div id="lobbyPlayers"></div>
-    <div id="questionArea" style="display:none;">
-      <h3 id="questionText"></h3>
-      <div id="options"></div>
-      <p id="feedback" style="font-weight:bold; font-size:1.3rem;"></p>
+  <!-- JOIN / LOBBY -->
+  <div id="joinScreen" class="card hidden">
+    <h2>Unirse a Quiz</h2>
+    <input id="joinCode" placeholder="Código del Quiz" maxlength="6" style="text-transform:uppercase" />
+    <button onclick="joinQuiz()">Unirse</button>
+    <p id="joinError" style="color:red"></p>
+  </div>
+
+  <!-- LOBBY -->
+  <div id="lobbyScreen" class="card hidden">
+    <h2>Lobby - Código: <span id="lobbyCode"></span></h2>
+    <h3>Jugadores conectados (<span id="playerCount">0</span>)</h3>
+    <div id="playerList"></div>
+    <button id="startButton" onclick="startGame()" class="hidden" style="background:#38b2ac; margin-top:30px">Empezar Quiz</button>
+  </div>
+
+  <!-- JUEGO -->
+  <div id="gameScreen" class="card hidden">
+    <h3 id="questionNumber"></h3>
+    <h2 id="currentQuestion"></h2>
+    <div id="options" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:30px"></div>
+    <p id="gameFeedback" style="margin-top:30px; font-size:1.4rem; font-weight:bold"></p>
+  </div>
+
+  <!-- TIENDA -->
+  <div id="shopScreen" class="card hidden">
+    <h2>Tienda de Sobres</h2>
+    <p>Monedas: <strong id="userCoins">0</strong></p>
+    
+    <div class="shop-item" onclick="buyPack(1)">
+      <h3>Sobre Normal</h3>
+      <p>10 monedas</p>
     </div>
-    <button id="startBtn" onclick="startQuiz()" style="display:none; background:#4CAF50;">Empezar Quiz</button>
+    <div class="shop-item" onclick="buyPack(2)">
+      <h3>Sobre Raro</h3>
+      <p>25 monedas</p>
+    </div>
+    <div class="shop-item" onclick="buyPack(3)">
+      <h3>Sobre Épico</h3>
+      <p>50 monedas</p>
+    </div>
+  </div>
+
+  <!-- RULETA -->
+  <div id="rouletteScreen" class="card hidden">
+    <h2>Ruleta Diaria (cada 5 horas)</h2>
+    <div class="roulette" onclick="spinRoulette()">
+      <div id="rouletteWheel" class="roulette-wheel"></div>
+    </div>
+    <p id="rouletteResult" style="font-size:1.8rem; margin-top:20px"></p>
   </div>
 
 </div>
 
 <script>
-// ================================================
-// CONFIGURACIÓN FIREBASE (copia tu config real)
-// ================================================
+// ================== FIREBASE CONFIG ==================
 const firebaseConfig = {
   apiKey: "AIzaSyD13N4-9MjTrmlPwGP7mves0Exje4v2ACw",
   authDomain: "kahoot-8529e.firebaseapp.com",
@@ -84,88 +205,80 @@ const firebaseConfig = {
   projectId: "kahoot-8529e",
   storageBucket: "kahoot-8529e.firebasestorage.app",
   messagingSenderId: "313414356056",
-  appId: "1:313414356056:web:4aab4587f7df9393008e2d",
-  measurementId: "G-8T4CPC1BQ3"
+  appId: "1:313414356056:web:4aab4587f7df9393008e2d"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const database = firebase.database();
+const db = firebase.database();
 
-// ================================================
-// FUNCIONES DE AUTENTICACIÓN
-// ================================================
+// ================== VARIABLES GLOBALES ==================
+let currentGameCode = null;
+let isCreator = false;
+
+// ================== FUNCIONES DE AUTENTICACIÓN ==================
 function login() {
   const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  auth.signInWithEmailAndPassword(email, password)
-    .then(user => showDashboard())
-    .catch(err => document.getElementById('loginError').textContent = err.message);
+  const pass = document.getElementById('password').value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => showScreen('dashboardScreen'))
+    .catch(err => document.getElementById('authError').textContent = err.message);
 }
 
 function register() {
   const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(user => showDashboard())
-    .catch(err => document.getElementById('loginError').textContent = err.message);
+  const pass = document.getElementById('password').value;
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => showScreen('dashboardScreen'))
+    .catch(err => document.getElementById('authError').textContent = err.message);
 }
 
 function logout() {
-  auth.signOut().then(() => {
-    showSection('loginSection');
-  });
+  auth.signOut().then(() => showScreen('loginScreen'));
 }
 
-// ================================================
-// NAVEGACIÓN ENTRE SECCIONES
-// ================================================
-function showSection(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+// ================== NAVEGACIÓN ==================
+function showScreen(screenId) {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+  document.getElementById(screenId).classList.remove('hidden');
 }
 
-function showDashboard() {
-  document.getElementById('userEmail').textContent = auth.currentUser.email;
-  showSection('dashboardSection');
-}
+// ================== DASHBOARD ==================
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('userEmail').textContent = user.email;
+    showScreen('dashboardScreen');
+  } else {
+    showScreen('loginScreen');
+  }
+});
 
+// ================== CREAR QUIZ ==================
 function showCreateQuiz() {
-  showSection('createQuizSection');
-  // Limpiar formulario
-  document.getElementById('quizTitle').value = '';
-  document.getElementById('questionsContainer').innerHTML = '';
-  addQuestion(); // Añade la primera pregunta
+  showScreen('createQuizScreen');
+  document.getElementById('questionsList').innerHTML = '';
+  addQuestionField();
 }
 
-// ================================================
-// CREAR QUIZ
-// ================================================
-let questionCount = 0;
-
-function addQuestion() {
-  questionCount++;
-  const container = document.getElementById('questionsContainer');
+function addQuestionField() {
+  const container = document.getElementById('questionsList');
+  const index = container.children.length + 1;
   const div = document.createElement('div');
   div.innerHTML = `
-    <h4>Pregunta ${questionCount}</h4>
-    <input id="q${questionCount}" placeholder="Escribe la pregunta" style="width:100%; padding:10px; margin-bottom:10px;" />
-    <div>
-      <input id="q${questionCount}_1" placeholder="Opción 1" style="width:80%; padding:8px;" />
-      <input type="radio" name="correct${questionCount}" value="0" />
-    </div>
-    <div>
-      <input id="q${questionCount}_2" placeholder="Opción 2" style="width:80%; padding:8px;" />
-      <input type="radio" name="correct${questionCount}" value="1" />
-    </div>
-    <div>
-      <input id="q${questionCount}_3" placeholder="Opción 3" style="width:80%; padding:8px;" />
-      <input type="radio" name="correct${questionCount}" value="2" />
-    </div>
-    <div>
-      <input id="q${questionCount}_4" placeholder="Opción 4" style="width:80%; padding:8px;" />
-      <input type="radio" name="correct${questionCount}" value="3" />
-    </div>
+    <h4>Pregunta ${index}</h4>
+    <input id="q${index}" placeholder="Pregunta" style="width:100%; padding:10px; margin:5px 0" />
+    <input id="o${index}_1" placeholder="Opción 1" style="width:48%; padding:8px; margin:5px" />
+    <input id="o${index}_2" placeholder="Opción 2" style="width:48%; padding:8px; margin:5px" />
+    <input id="o${index}_3" placeholder="Opción 3" style="width:48%; padding:8px; margin:5px" />
+    <input id="o${index}_4" placeholder="Opción 4" style="width:48%; padding:8px; margin:5px" />
+    <p>Respuesta correcta: 
+      <select id="correct${index}">
+        <option value="0">Opción 1</option>
+        <option value="1">Opción 2</option>
+        <option value="2">Opción 3</option>
+        <option value="3">Opción 4</option>
+      </select>
+    </p>
   `;
   container.appendChild(div);
 }
@@ -175,21 +288,23 @@ function saveQuiz() {
   if (!title) return alert('Pon un título');
 
   const questions = [];
-  for (let i = 1; i <= questionCount; i++) {
-    const q = document.getElementById(`q${i}`).value.trim();
-    const opts = [];
-    for (let j = 1; j <= 4; j++) {
-      const opt = document.getElementById(`q${i}_${j}`).value.trim();
-      if (opt) opts.push(opt);
-    }
-    const correct = document.querySelector(`input[name="correct${i}"]:checked`);
-    if (!q || opts.length < 2 || !correct) return alert('Completa todas las preguntas correctamente');
-    questions.push({ question: q, options: opts, correct: parseInt(correct.value) });
+  const container = document.getElementById('questionsList');
+  for (let i = 0; i < container.children.length; i++) {
+    const q = document.getElementById(`q${i+1}`).value.trim();
+    const opts = [
+      document.getElementById(`o${i+1}_1`).value.trim(),
+      document.getElementById(`o${i+1}_2`).value.trim(),
+      document.getElementById(`o${i+1}_3`).value.trim(),
+      document.getElementById(`o${i+1}_4`).value.trim()
+    ];
+    const correct = parseInt(document.getElementById(`correct${i+1}`).value);
+    if (!q || opts.some(o => !o)) return alert('Completa todas las preguntas');
+    questions.push({ question: q, options: opts, correct });
   }
 
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const gameCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-  database.ref(`games/${code}`).set({
+  db.ref(`games/${gameCode}`).set({
     title,
     creator: auth.currentUser.uid,
     creatorEmail: auth.currentUser.email,
@@ -200,124 +315,108 @@ function saveQuiz() {
     started: false,
     ended: false
   }).then(() => {
-    document.getElementById('gameCode').textContent = code;
-    const joinLink = `${window.location.origin}${window.location.pathname}?code=${code}`;
-    document.getElementById('joinLink').href = joinLink;
-    document.getElementById('joinLink').textContent = joinLink;
-    document.getElementById('qr').style.display = 'block';
+    document.getElementById('generatedCode').textContent = gameCode;
+    const link = `${window.location.origin}${window.location.pathname}?code=${gameCode}`;
+    document.getElementById('joinLinkText').textContent = link;
+    document.getElementById('quizCreated').classList.remove('hidden');
 
     new QRCode(document.getElementById("qrcode"), {
-      text: joinLink,
+      text: link,
       width: 256,
       height: 256
     });
-
-    // Escuchar jugadores
-    database.ref(`games/${code}/players`).on('value', snap => {
-      const playersDiv = document.getElementById('lobbyPlayers') || document.createElement('div');
-      playersDiv.innerHTML = '<h3>Jugadores conectados:</h3>';
-      snap.forEach(child => {
-        const p = child.val();
-        playersDiv.innerHTML += `<div class="player">${p.email || 'Anónimo'}</div>`;
-      });
-    });
-  }).catch(err => alert('Error: ' + err.message));
+  });
 }
 
-// ================================================
-// LÓGICA PARA UNIRSE Y JUGAR (si hay ?code= en la URL)
-// ================================================
-window.onload = () => {
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      document.getElementById('userEmail').textContent = user.email;
-      showDashboard();
-    } else {
-      showSection('loginSection');
-    }
-  });
+// ================== UNIRSE ==================
+function showJoinScreen() {
+  showScreen('joinScreen');
+}
 
-  // Si hay código en la URL → modo join/juego
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
-  if (code) {
-    joinGame(code);
-  }
-};
+function joinQuiz() {
+  const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  if (!code) return alert('Pon un código');
 
-function joinGame(code) {
-  showSection('gameSection');
-  document.getElementById('currentCode').textContent = code;
-
-  const gameRef = database.ref(`games/${code}`);
-
-  gameRef.once('value', snap => {
+  db.ref(`games/${code}`).once('value', snap => {
     const game = snap.val();
-    if (!game) return alert('Quiz no encontrado');
-    document.getElementById('gameTitle').textContent = game.title;
+    if (!game) return alert('Código inválido');
 
-    // Añadir jugador
-    const playerRef = database.ref(`games/${code}/players/${auth.currentUser.uid}`);
-    playerRef.set({
+    db.ref(`games/${code}/players/${auth.currentUser.uid}`).set({
       uid: auth.currentUser.uid,
       email: auth.currentUser.email,
       score: 0,
       answered: false,
       joinedAt: Date.now()
+    }).then(() => {
+      window.location.href = `?code=${code}`;
     });
+  });
+}
 
-    // Escuchar cambios
-    gameRef.on('value', snap => {
-      const g = snap.val();
-      if (!g) return;
+// ================== LOBBY Y JUEGO ==================
+function checkForCodeInURL() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (code) {
+    currentGameCode = code;
+    showScreen('lobbyScreen');
+    document.getElementById('lobbyCode').textContent = code;
 
-      // Lobby
-      const playersDiv = document.getElementById('lobbyPlayers');
-      playersDiv.innerHTML = '<h3>Jugadores:</h3>';
-      Object.values(g.players || {}).forEach(p => {
-        playersDiv.innerHTML += `<div class="player">${p.email} ${p.uid === g.creator ? '👑' : ''}</div>`;
+    db.ref(`games/${code}`).on('value', snap => {
+      const game = snap.val();
+      if (!game) return;
+
+      const list = document.getElementById('playerList');
+      list.innerHTML = '';
+      Object.values(game.players || {}).forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'player';
+        div.textContent = p.email || 'Jugador';
+        list.appendChild(div);
       });
 
-      if (g.started) {
-        document.getElementById('lobbyPlayers').style.display = 'none';
-        document.getElementById('questionArea').style.display = 'block';
-        showQuestion(g);
+      if (game.started) {
+        startGameForAll();
       }
     });
-  });
+  }
 }
 
-function showQuestion(game) {
-  const index = game.currentQuestion;
-  if (index < 0 || index >= game.questions.length) return;
-
-  const q = game.questions[index];
-  document.getElementById('questionText').textContent = q.question;
-
-  const optionsDiv = document.getElementById('options');
-  optionsDiv.innerHTML = '';
-  q.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = opt;
-    btn.style = 'width:100%; padding:14px; margin:8px 0; font-size:1.2rem; background:#e0e0e0; border:none; border-radius:8px; cursor:pointer;';
-    btn.onclick = () => submitAnswer(game, index, i);
-    optionsDiv.appendChild(btn);
-  });
+function startGame() {
+  if (!currentGameCode) return;
+  db.ref(`games/${currentGameCode}`).update({ started: true, currentQuestion: 0 });
 }
 
-function submitAnswer(game, qIndex, optionIndex) {
-  const q = game.questions[qIndex];
-  const isCorrect = optionIndex === q.correct;
-
-  database.ref(`games/${game.code}/players/${auth.currentUser.uid}`).update({
-    score: firebase.database.ServerValue.increment(isCorrect ? 10 : 0),
-    answered: true,
-    lastCorrect: isCorrect
-  });
-
-  document.getElementById('feedback').textContent = isCorrect ? '¡Correcto! +10' : 'Incorrecto';
-  document.getElementById('feedback').style.color = isCorrect ? '#4CAF50' : '#f44336';
+function startGameForAll() {
+  showScreen('gameScreen');
+  // Aquí iría la lógica del juego (simplificada por ahora)
+  alert('¡El quiz ha empezado! (Versión simplificada)');
 }
+
+// ================== TIENDA Y RULETA ==================
+function showShop() {
+  showScreen('shopScreen');
+  // Aquí puedes expandir la tienda más adelante
+}
+
+function buyPack(price) {
+  alert(`Compraste un sobre por ${price} monedas (animación en desarrollo)`);
+}
+
+function showRoulette() {
+  showScreen('rouletteScreen');
+}
+
+function spinRoulette() {
+  const prizes = [0,0,0,0,0,0,0,0,0,5,5,1000];
+  const result = prizes[Math.floor(Math.random() * prizes.length)];
+  document.getElementById('rouletteResult').textContent = result === 0 ? '¡Nada!' : `¡Ganaste ${result} monedas!`;
+}
+
+// Inicializar
+window.onload = () => {
+  checkForCodeInURL();
+};
 </script>
 </body>
 </html>
