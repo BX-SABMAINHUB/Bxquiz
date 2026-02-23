@@ -15,7 +15,8 @@ export default function CreateQuiz() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://tu-proyecto.vercel.app';
+  // URL dinámica (funciona en local y Vercel)
+  const BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://bxquiz.vercel.app';
 
   useEffect(() => {
     if (!auth.currentUser) {
