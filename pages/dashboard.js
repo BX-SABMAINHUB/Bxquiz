@@ -10,23 +10,11 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: '100px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ marginBottom: '40px' }}>Bienvenido a BxQuiz</h1>
-      <p style={{ fontSize: '1.3rem', marginBottom: '30px' }}>
-        {auth.currentUser.email}
-      </p>
+    <div style={{ padding: '100px', textAlign: 'center' }}>
+      <h1>Bienvenido a BxQuiz, {auth.currentUser.email}</h1>
       <button
         onClick={() => router.push('/create-quiz')}
-        style={{
-          padding: '16px 60px',
-          fontSize: '1.4rem',
-          background: '#4CAF50',
-          color: 'white',
-          border: 'none',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-        }}
+        style={{ padding: '20px 60px', fontSize: '1.5rem', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '12px' }}
       >
         Crear Quiz
       </button>
