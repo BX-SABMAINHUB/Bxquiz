@@ -1,15 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  // Necesario para GitHub Pages y export estático
-  output: 'export',
+  output: 'export',  // Esto genera archivos estáticos
   images: {
-    unoptimized: true
+    unoptimized: true  // Necesario para export
   },
-  trailingSlash: true,
-  // Evita errores comunes en Vercel/GitHub Pages
-  assetPrefix: process.env.NODE_ENV === 'production' ? '.' : '',
-  basePath: ''
+  trailingSlash: true,  // Soluciona problemas de rutas en GitHub Pages
 };
 
 module.exports = nextConfig;
