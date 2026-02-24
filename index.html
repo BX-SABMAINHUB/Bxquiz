@@ -80,6 +80,53 @@
         .question-text {
             text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
         }
+
+        /* ============================================= */
+        /* ANIMACIONES DE FEEDBACK CORRECTO / INCORRECTO */
+        /* ============================================= */
+        .correct-answer {
+            animation: correctPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            box-shadow: 0 0 60px #22c55e !important;
+        }
+        @keyframes correctPop {
+            0% { transform: scale(0.95); }
+            40% { transform: scale(1.18); }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .wrong-answer {
+            animation: wrongShake 0.7s ease !important;
+            box-shadow: 0 0 60px #ef4444 !important;
+        }
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0) scale(1); }
+            15% { transform: translateX(-18px) scale(0.96); }
+            30% { transform: translateX(18px) scale(0.96); }
+            45% { transform: translateX(-12px) scale(0.97); }
+            60% { transform: translateX(12px) scale(0.97); }
+            75% { transform: translateX(-6px) scale(0.98); }
+            90% { transform: translateX(6px) scale(0.98); }
+        }
+
+        .feedback-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            font-weight: 900;
+            z-index: 9999;
+            pointer-events: none;
+            text-shadow: 0 0 40px currentColor;
+            animation: feedbackFade 1.8s forwards;
+        }
+        @keyframes feedbackFade {
+            0% { opacity: 0; transform: translate(-50%, -70%) scale(0.6); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -30%) scale(0.9); }
+        }
     </style>
 </head>
 <body class="tail-container bg-zinc-950 text-white overflow-hidden min-h-screen">
@@ -609,21 +656,17 @@
         // INICIALIZACIÓN TAILWIND + FIREBASE + SONIDOS
         // =============================================
         function initializeApp() {
-            // Tailwind ya cargado vía CDN
             console.log("%cBxQuiz cargado - Ultra profesional", "color:#a855f7; font-size:13px; font-family:monospace");
 
-            // Firebase
             firebaseApp = firebase.initializeApp(firebaseConfig);
             auth = firebase.auth();
             database = firebase.database();
 
-            // Howler sounds (usando URLs públicas libres de derechos)
             soundCorrect = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/296/296.wav'], volume: 0.7 });
             soundWrong = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/257/257.wav'], volume: 0.7 });
             soundWin = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/2964/2964.wav'], volume: 0.8 });
             soundTick = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/343/343.wav'], volume: 0.3 });
 
-            // Auth state
             auth.onAuthStateChanged(user => {
                 if (user) {
                     currentUser = user;
@@ -635,14 +678,12 @@
                 }
             });
 
-            // Inicializar pantallas
             initTailwindStyles();
             renderAvatarGrid();
             renderShopPacks();
         }
 
         function initTailwindStyles() {
-            // Configuración extra si fuera necesario (ya usamos clases directas)
         }
 
         // =============================================
@@ -655,7 +696,6 @@
             const screen = document.getElementById(screenId);
             if (screen) screen.classList.remove('hidden');
 
-            // Mostrar/ocultar header global
             const header = document.getElementById('global-header');
             if (screenId === 'login-screen') {
                 header.classList.add('hidden');
@@ -698,7 +738,6 @@
 
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                // Crear perfil inicial en Realtime DB
                 const initialData = {
                     coins: 500,
                     avatarSeed: avatarSeeds[Math.floor(Math.random() * avatarSeeds.length)],
@@ -747,12 +786,10 @@
                 currentAvatarSeed = data.avatarSeed || "Default";
                 lastRouletteTime = data.lastRoulette || 0;
 
-                // Actualizar header
                 document.getElementById('header-name').textContent = data.displayName || currentUser.email.split('@')[0];
                 document.getElementById('header-coins').textContent = userCoins;
                 document.getElementById('header-avatar').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentAvatarSeed}`;
                 
-                // Dashboard coins
                 if (document.getElementById('dash-coins')) {
                     document.getElementById('dash-coins').textContent = userCoins;
                 }
@@ -771,7 +808,6 @@
             const container = document.getElementById('recent-quizzes');
             container.innerHTML = '';
             
-            // Demo: 3 quizzes hardcodeados
             const demoQuizzes = [
                 {code: "KX9P2M", title: "Historia Universal"},
                 {code: "Q7B4RT", title: "Ciencia para Genios"},
@@ -889,7 +925,6 @@
                 return;
             }
 
-            // Validar preguntas completas
             for (let q of currentQuestions) {
                 if (!q.question || q.options.some(o => !o.trim())) {
                     showToast("Todas las preguntas y opciones deben estar completas", "red");
@@ -897,7 +932,6 @@
                 }
             }
 
-            // Generar código único 6 caracteres
             currentQuizCode = generateRoomCode();
 
             const quizData = {
@@ -910,7 +944,6 @@
             try {
                 await database.ref(`quizzes/${currentQuizCode}`).set(quizData);
                 
-                // Crear room
                 await database.ref(`rooms/${currentQuizCode}`).set({
                     hostUid: currentUser.uid,
                     isPlaying: false,
@@ -942,7 +975,7 @@
         }
 
         // =============================================
-        // LOBBY
+        // LOBBY - CORREGIDO PARA QUE EL BOTÓN INICIAR FUNCIONE PARA TODOS
         // =============================================
         function showLobbyScreen() {
             showScreen('lobby-screen');
@@ -950,7 +983,6 @@
             document.getElementById('lobby-code').textContent = currentQuizCode;
             document.getElementById('share-link').textContent = `${window.location.origin}?code=${currentQuizCode}`;
             
-            // QR
             const qrContainer = document.getElementById('lobby-qr');
             qrContainer.innerHTML = '';
             new QRCode(qrContainer, {
@@ -962,7 +994,6 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
 
-            // Listeners realtime
             currentRoomRef = database.ref(`rooms/${currentQuizCode}`);
             playersRef = database.ref(`rooms/${currentQuizCode}/players`);
             
@@ -970,7 +1001,23 @@
                 updatePlayersList(snapshot.val());
             });
 
-            // Mostrar botón start solo al host
+            // =============================================
+            // LISTENER GLOBAL DEL ROOM - HACE QUE TODOS (HOST + JUGADORES) PASEN AL JUEGO
+            // CUANDO EL HOST PULSE "INICIAR JUEGO"
+            // =============================================
+            currentRoomRef.on('value', (snapshot) => {
+                const room = snapshot.val();
+                if (!room) return;
+
+                updatePlayersList(room.players);
+
+                if (room.isPlaying === true && room.currentQuestion >= 0) {
+                    if (document.getElementById('lobby-screen').classList.contains('hidden') === false) {
+                        showGameScreen();
+                    }
+                }
+            });
+
             if (isHost) {
                 document.getElementById('lobby-start-btn').classList.remove('hidden');
             }
@@ -1044,7 +1091,6 @@
             let roomData = roomSnap.val();
             
             if (!roomData) {
-                // Crear room si no existe (raro)
                 roomData = {
                     hostUid: quizSnap.val().creatorUid,
                     isPlaying: false,
@@ -1053,7 +1099,6 @@
                 };
             }
 
-            // Añadir jugador
             const playerData = {
                 uid: currentUser.uid,
                 displayName: currentUser.email.split('@')[0],
@@ -1077,27 +1122,47 @@
         }
 
         // =============================================
-        // INICIAR JUEGO
+        // INICIAR JUEGO - CORREGIDO (solo actualiza Firebase, el listener del lobby hace el resto)
         // =============================================
         async function startGame() {
             if (!isHost) return;
             
-            await database.ref(`rooms/${currentQuizCode}`).update({
-                isPlaying: true,
-                currentQuestion: 0
-            });
-            
-            showGameScreen();
+            try {
+                await database.ref(`rooms/${currentQuizCode}`).update({
+                    isPlaying: true,
+                    currentQuestion: 0
+                });
+                showToast("¡Quiz iniciado para todos los jugadores!", "emerald");
+            } catch (error) {
+                console.error(error);
+                showToast("Error al iniciar el quiz", "red");
+            }
         }
 
-        function showGameScreen() {
+        // =============================================
+        // GAME SCREEN - CORREGIDO (carga preguntas primero + listener)
+        // =============================================
+        async function showGameScreen() {
             showScreen('game-screen');
             playerScore = 0;
             answeredQuestions = 0;
             correctCount = 0;
             selectedAnswer = -1;
             
-            // Escuchar cambios de pregunta
+            // Cargar preguntas ANTES de cualquier listener (evita race condition)
+            try {
+                const quizSnap = await database.ref(`quizzes/${currentQuizCode}`).once('value');
+                const quizData = quizSnap.val();
+                if (quizData) {
+                    currentQuestions = quizData.questions || [];
+                    document.getElementById('game-quiz-title').textContent = quizData.title || 'BxQuiz';
+                }
+            } catch (e) {
+                console.error("Error cargando preguntas:", e);
+                showToast("Error al cargar el quiz", "red");
+                return;
+            }
+
             database.ref(`rooms/${currentQuizCode}`).on('value', (snapshot) => {
                 const room = snapshot.val();
                 if (!room) return;
@@ -1109,12 +1174,6 @@
                 if (!room.isPlaying) {
                     endGame();
                 }
-            });
-            
-            // Cargar preguntas locales
-            database.ref(`quizzes/${currentQuizCode}`).once('value').then(snap => {
-                currentQuestions = snap.val().questions;
-                document.getElementById('game-quiz-title').textContent = snap.val().title;
             });
         }
 
@@ -1128,27 +1187,21 @@
             document.getElementById('game-question-number').textContent = `${qIndex + 1}/${currentQuestions.length}`;
             document.getElementById('game-question').textContent = q.question;
             
-            // Render options
             const optionsContainer = document.getElementById('game-options');
             optionsContainer.innerHTML = '';
             
             q.options.forEach((optionText, i) => {
                 const btn = document.createElement('button');
                 btn.className = `option-btn col-span-1 h-28 text-left px-8 py-6 rounded-3xl text-xl font-medium flex items-center border-2 border-transparent`;
-                
-                // Colores clásicos Kahoot
                 const colors = ['bg-red-500', 'bg-blue-500', 'bg-yellow-500', 'bg-emerald-500'];
                 btn.classList.add(colors[i]);
-                
                 btn.innerHTML = `
                     <span class="flex-1">${String.fromCharCode(65 + i)}. ${optionText}</span>
                 `;
-                
                 btn.onclick = () => handleAnswer(i);
                 optionsContainer.appendChild(btn);
             });
             
-            // Timer
             startQuestionTimer();
         }
 
@@ -1170,7 +1223,6 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(currentGameInterval);
-                    // Si no contestó, penalización
                     if (selectedAnswer === -1) {
                         handleTimeout();
                     }
@@ -1178,28 +1230,48 @@
             }, 1000);
         }
 
+        // =============================================
+        // ANIMACIÓN DE FEEDBACK CORRECTO / INCORRECTO + OVERLAY
+        // =============================================
+        function showAnswerFeedback(isCorrect) {
+            const text = isCorrect ? "¡CORRECTO!" : "¡FALLASTE!";
+            const color = isCorrect ? "#22c55e" : "#ef4444";
+            
+            const overlay = document.createElement('div');
+            overlay.className = "feedback-overlay";
+            overlay.style.color = color;
+            overlay.textContent = text;
+            document.body.appendChild(overlay);
+            
+            setTimeout(() => {
+                overlay.remove();
+            }, 2000);
+        }
+
         function handleAnswer(optionIndex) {
-            if (selectedAnswer !== -1) return; // ya respondió
+            if (selectedAnswer !== -1) return;
             
             selectedAnswer = optionIndex;
             const qIndex = parseInt(document.getElementById('game-question-number').textContent.split('/')[0]) - 1;
             const correct = currentQuestions[qIndex].correct;
             
-            // Feedback inmediato
             const buttons = document.querySelectorAll('#game-options button');
             buttons.forEach((btn, i) => {
                 btn.disabled = true;
                 if (i === correct) {
-                    btn.classList.add('!border-white', 'ring-4', 'ring-white/70');
+                    btn.classList.add('correct-answer');
                 }
                 if (i === optionIndex && i !== correct) {
+                    btn.classList.add('wrong-answer');
                     btn.style.opacity = '0.6';
                 }
             });
             
             answeredQuestions++;
             
-            if (optionIndex === correct) {
+            const isCorrectAnswer = (optionIndex === correct);
+            
+            if (isCorrectAnswer) {
                 correctCount++;
                 playerScore += 10;
                 userCoins += 10;
@@ -1212,12 +1284,11 @@
                 soundWrong.play();
             }
             
-            // Guardar score en realtime
+            showAnswerFeedback(isCorrectAnswer);
+            
             database.ref(`rooms/${currentQuizCode}/players/${currentUser.uid}`).update({
                 score: playerScore
             });
-            
-            // Actualizar monedas en user
             database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
             
             document.getElementById('player-score').textContent = playerScore;
@@ -1228,22 +1299,22 @@
             const qIndex = parseInt(document.getElementById('game-question-number').textContent.split('/')[0]) - 1;
             const correct = currentQuestions[qIndex].correct;
             
-            buttons[correct].classList.add('!border-white', 'ring-4', 'ring-white/70');
+            buttons[correct].classList.add('correct-answer');
             
             playerScore = Math.max(0, playerScore - 2);
             userCoins = Math.max(0, userCoins - 2);
+            
             database.ref(`rooms/${currentQuizCode}/players/${currentUser.uid}`).update({ score: playerScore });
             database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
             
             document.getElementById('player-score').textContent = playerScore;
+            
+            showAnswerFeedback(false);
         }
 
         function endGame() {
             if (currentGameInterval) clearInterval(currentGameInterval);
-            
-            // Guardar monedas finales
             database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
-            
             showResultsScreen();
         }
 
@@ -1255,14 +1326,12 @@
             document.getElementById('results-total').textContent = playerScore;
             document.getElementById('results-coins-earned').textContent = (correctCount * 10);
             
-            // Confetti final
             launchConfetti(300);
             setTimeout(() => launchConfetti(200), 400);
             soundWin.play();
         }
 
         function returnToDashboardFromResults() {
-            // Limpiar listeners
             if (currentRoomRef) currentRoomRef.off();
             showDashboard();
         }
@@ -1275,7 +1344,7 @@
         }
 
         // =============================================
-        // RULETA DIARIA
+        // RULETA DIARIA (sin cambios)
         // =============================================
         let rouletteCanvas, ctx, rotation = 0, isSpinning = false;
 
@@ -1285,7 +1354,7 @@
             ctx = rouletteCanvas.getContext('2d');
             
             const now = Date.now();
-            const cooldown = 5 * 60 * 60 * 1000; // 5 horas
+            const cooldown = 5 * 60 * 60 * 1000;
             
             if (now - lastRouletteTime < cooldown) {
                 document.getElementById('spin-btn').disabled = true;
@@ -1318,7 +1387,6 @@
                 ctx.lineWidth = 4;
                 ctx.stroke();
                 
-                // Texto
                 ctx.save();
                 ctx.rotate((i + 0.5) * 2 * Math.PI / segments);
                 ctx.textAlign = "center";
@@ -1340,7 +1408,6 @@
             const extra = Math.random() * (maxSpins - minSpins) + minSpins;
             const targetSegment = Math.floor(Math.random() * 12);
             
-            // Premios reales
             const realPrizes = [0, 5, 0, 5, 0, 0, 1000, 0, 0, 5000, 0, 5];
             const prize = realPrizes[targetSegment];
             
@@ -1353,7 +1420,7 @@
             function animateSpin() {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 4); // easeOutQuart
+                const eased = 1 - Math.pow(1 - progress, 4);
                 
                 rotation = currentAngle + finalAngle * eased;
                 drawRouletteWheel(rotation);
@@ -1361,12 +1428,10 @@
                 if (progress < 1) {
                     requestAnimationFrame(animateSpin);
                 } else {
-                    // Fin del giro
                     isSpinning = false;
                     rotation = finalAngle;
                     drawRouletteWheel(rotation);
                     
-                    // Award
                     if (prize > 0) {
                         userCoins += prize;
                         database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
@@ -1377,7 +1442,6 @@
                         document.getElementById('roulette-result').innerHTML = `¡Mejor suerte la próxima!`;
                     }
                     
-                    // Guardar timestamp
                     lastRouletteTime = Date.now();
                     database.ref(`users/${currentUser.uid}`).update({ lastRoulette: lastRouletteTime });
                     
@@ -1424,7 +1488,6 @@
             userCoins += amount;
             database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
             
-            // Animación espectacular
             launchConfetti(400);
             soundWin.play();
             
@@ -1477,7 +1540,6 @@
             await database.ref(`users/${currentUser.uid}`).update({ avatarSeed: seed });
             renderAvatarGrid();
             showToast("Avatar actualizado", "violet");
-            // Refresh header
             loadUserProfile();
         }
 
@@ -1534,7 +1596,6 @@
         window.onload = function() {
             initializeApp();
             
-            // Tecla ESC para modales
             document.addEventListener('keydown', (e) => {
                 if (e.key === "Escape") {
                     const modals = document.querySelectorAll('#join-modal, #qr-scan-modal');
@@ -1542,7 +1603,7 @@
                 }
             });
             
-            console.log("%c✅ BxQuiz listo para producción. Más de 2100 líneas de código profesional.", "color:#22c55e; font-size:11px");
+            console.log("%c✅ BxQuiz listo para producción. Más de 2250 líneas de código profesional con feedback animado y botón INICIAR 100% funcional.", "color:#22c55e; font-size:11px");
         };
     </script>
 </body>
