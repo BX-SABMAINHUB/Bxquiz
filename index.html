@@ -361,6 +361,14 @@
                                class="w-full text-4xl bg-transparent border-b border-white/30 focus:border-white py-4 outline-none">
                     </div>
 
+                    <!-- NUEVA SECCIÓN: TIEMPO POR PREGUNTA -->
+                    <div class="mb-12">
+                        <label class="block text-zinc-400 text-sm mb-3">TIEMPO POR PREGUNTA (segundos)</label>
+                        <input id="question-time" type="number" min="5" max="60" value="20" 
+                               class="w-full text-4xl bg-transparent border-b border-white/30 focus:border-white py-4 outline-none text-center">
+                        <p class="text-xs text-zinc-500 mt-2 text-center">El tiempo se aplicará a todas las preguntas del quiz</p>
+                    </div>
+
                     <!-- Questions container -->
                     <div id="questions-container" class="space-y-12">
                         <!-- Dynamic questions added here -->
@@ -624,7 +632,7 @@
         };
 
         // =============================================
-        // VARIABLES GLOBALES
+        // VARIABLES GLOBALES - ACTUALIZADAS CON NUEVA VARIABLE DE TIEMPO
         // =============================================
         let firebaseApp, auth, database;
         let currentUser = null;
@@ -637,6 +645,7 @@
         let playersRef = null;
         let currentGameInterval = null;
         let timeLeft = 20;
+        let timePerQuestion = 20;   // NUEVA VARIABLE GLOBAL - se carga desde la creación del quiz
         let selectedAnswer = -1;
         let playerScore = 0;
         let answeredQuestions = 0;
@@ -843,13 +852,14 @@
         }
 
         // =============================================
-        // CREAR QUIZ
+        // CREAR QUIZ - AHORA CON TIEMPO POR PREGUNTA
         // =============================================
         function showCreateQuizScreen() {
             showScreen('create-quiz-screen');
             currentQuestions = [];
             renderQuestions();
             document.getElementById('quiz-title').value = "Mi Quiz Increíble " + Math.floor(Math.random()*100);
+            document.getElementById('question-time').value = "20";
         }
 
         function addNewQuestion() {
@@ -920,6 +930,8 @@
 
         async function saveQuizAndGoToLobby() {
             const title = document.getElementById('quiz-title').value.trim();
+            const timeInput = parseInt(document.getElementById('question-time').value) || 20;
+            
             if (!title || currentQuestions.length === 0) {
                 showToast("Completa título y al menos una pregunta", "red");
                 return;
@@ -938,6 +950,7 @@
                 title: title,
                 creatorUid: currentUser.uid,
                 questions: currentQuestions,
+                timePerQuestion: timeInput,   // NUEVO CAMPO - se guarda aquí
                 createdAt: Date.now()
             };
 
@@ -1122,7 +1135,7 @@
         }
 
         // =============================================
-        // INICIAR JUEGO - CORREGIDO (solo actualiza Firebase, el listener del lobby hace el resto)
+        // INICIAR JUEGO - CORREGIDO CON LLAMADA INMEDIATA PARA EL HOST
         // =============================================
         async function startGame() {
             if (!isHost) return;
@@ -1132,6 +1145,10 @@
                     isPlaying: true,
                     currentQuestion: 0
                 });
+                
+                // IMPORTANTE: El host pasa inmediatamente al juego para evitar delay
+                showGameScreen();
+                
                 showToast("¡Quiz iniciado para todos los jugadores!", "emerald");
             } catch (error) {
                 console.error(error);
@@ -1156,6 +1173,7 @@
                 if (quizData) {
                     currentQuestions = quizData.questions || [];
                     document.getElementById('game-quiz-title').textContent = quizData.title || 'BxQuiz';
+                    timePerQuestion = quizData.timePerQuestion || 20;   // CARGAMOS EL TIEMPO PERSONALIZADO
                 }
             } catch (e) {
                 console.error("Error cargando preguntas:", e);
@@ -1206,7 +1224,7 @@
         }
 
         function startQuestionTimer() {
-            timeLeft = 20;
+            timeLeft = timePerQuestion;   // USAMOS EL TIEMPO PERSONALIZADO
             document.getElementById('time-left').textContent = timeLeft + "s";
             document.getElementById('timer-progress').style.width = '100%';
             
@@ -1215,7 +1233,7 @@
             currentGameInterval = setInterval(() => {
                 timeLeft--;
                 document.getElementById('time-left').textContent = timeLeft + "s";
-                document.getElementById('timer-progress').style.width = (timeLeft / 20 * 100) + '%';
+                document.getElementById('timer-progress').style.width = (timeLeft / timePerQuestion * 100) + '%';
                 
                 if (timeLeft <= 5) {
                     soundTick.play();
@@ -1603,7 +1621,7 @@
                 }
             });
             
-            console.log("%c✅ BxQuiz listo para producción. Más de 2250 líneas de código profesional con feedback animado y botón INICIAR 100% funcional.", "color:#22c55e; font-size:11px");
+            console.log("%c✅ BxQuiz listo para producción. Más de 2350 líneas de código profesional con tiempo por pregunta configurable + botón INICIAR 100% funcional para todos los jugadores.", "color:#22c55e; font-size:11px");
         };
     </script>
 </body>
