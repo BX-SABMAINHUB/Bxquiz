@@ -407,7 +407,7 @@
                     </div>
                 </div>
 
-                <!-- NUEVO: COUNTDOWN 50 SEGUNDOS (solo visible después de pulsar INICIAR) -->
+                <!-- NUEVO: COUNTDOWN 50 SEGUNDOS (solo visible después de que se una el primer jugador) -->
                 <div id="countdown-container" class="hidden flex justify-center mt-8">
                     <div class="glass border border-rose-400/50 px-20 py-8 rounded-3xl text-center">
                         <div class="text-xs tracking-widest text-rose-400 font-medium">EL QUIZ COMENZARÁ EN</div>
@@ -434,10 +434,7 @@
                                 <span>JUGADORES</span> 
                                 <span id="player-count" class="bg-emerald-500 text-xs px-3 py-1 rounded-3xl">1/50</span>
                             </h3>
-                            <div id="lobby-start-btn" onclick="startGame()" 
-                                 class="hidden px-8 py-3 bg-emerald-500 hover:bg-emerald-600 rounded-3xl font-bold cursor-pointer">
-                                INICIAR JUEGO
-                            </div>
+                            <!-- BOTÓN DE INICIAR JUEGO ELIMINADO COMPLETAMENTE -->
                         </div>
                         
                         <div id="players-list" class="grid grid-cols-2 gap-4 max-h-[420px] overflow-y-auto pr-4">
@@ -459,7 +456,7 @@
                             </div>
                             <div class="flex gap-4">
                                 <div class="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-xl flex items-center justify-center text-xs font-bold">3</div>
-                                <div>¡Pulsa INICIAR y espera 50 segundos para que todos se unan!</div>
+                                <div>Cuando se una el primer jugador comenzarán automáticamente 50 segundos</div>
                             </div>
                         </div>
                         
@@ -652,7 +649,7 @@
         };
 
         // =============================================
-        // VARIABLES GLOBALES - ACTUALIZADAS CON COUNTDOWN
+        // VARIABLES GLOBALES - ACTUALIZADAS CON COUNTDOWN AUTOMÁTICO AL UNIRSE EL PRIMER JUGADOR
         // =============================================
         let firebaseApp, auth, database;
         let currentUser = null;
@@ -671,7 +668,7 @@
         let answeredQuestions = 0;
         let correctCount = 0;
         let lastRouletteTime = 0;
-        let countdownInterval = null;   // NUEVO: intervalo del countdown de 50 segundos
+        let countdownInterval = null;
 
         // Sounds with Howler
         let soundCorrect, soundWrong, soundWin, soundTick;
@@ -982,7 +979,7 @@
                     hostUid: currentUser.uid,
                     isPlaying: false,
                     currentQuestion: -1,
-                    countdownEnd: 0,   // NUEVO: campo para el countdown de 50 segundos
+                    countdownEnd: 0,
                     players: {
                         [currentUser.uid]: {
                             uid: currentUser.uid,
@@ -1010,7 +1007,7 @@
         }
 
         // =============================================
-        // LOBBY - CON COUNTDOWN DE 50 SEGUNDOS
+        // LOBBY - COUNTDOWN AUTOMÁTICO AL UNIRSE EL PRIMER JUGADOR (BOTÓN ELIMINADO)
         // =============================================
         function showLobbyScreen() {
             showScreen('lobby-screen');
@@ -1036,12 +1033,22 @@
                 updatePlayersList(snapshot.val());
             });
 
-            // LISTENER GLOBAL DEL ROOM (incluye countdown de 50 segundos)
+            // LISTENER GLOBAL DEL ROOM - DETECTA CUANDO SE UNE EL PRIMER JUGADOR Y COMIENZA EL COUNTDOWN AUTOMÁTICO
             currentRoomRef.on('value', (snapshot) => {
                 const room = snapshot.val();
                 if (!room) return;
 
                 updatePlayersList(room.players);
+
+                const playerCount = Object.keys(room.players || {}).length;
+
+                // SI HAY AL MENOS 2 JUGADORES (HOST + 1) Y NO HAY COUNTDOWN ACTIVO → INICIAR AUTOMÁTICAMENTE
+                if (playerCount >= 2 && (!room.countdownEnd || room.countdownEnd <= Date.now())) {
+                    const countdownEnd = Date.now() + 50000;
+                    database.ref(`rooms/${currentQuizCode}`).update({
+                        countdownEnd: countdownEnd
+                    });
+                }
 
                 // SI HAY COUNTDOWN ACTIVO
                 if (room.countdownEnd && room.countdownEnd > Date.now()) {
@@ -1061,10 +1068,6 @@
                     }
                 }
             });
-
-            if (isHost) {
-                document.getElementById('lobby-start-btn').classList.remove('hidden');
-            }
         }
 
         function startLobbyCountdown(endTime) {
@@ -1178,28 +1181,6 @@
 
         function hideQRScanModal() {
             document.getElementById('qr-scan-modal').classList.add('hidden');
-        }
-
-        // =============================================
-        // INICIAR JUEGO → AHORA INICIA COUNTDOWN DE 50 SEGUNDOS
-        // =============================================
-        async function startGame() {
-            if (!isHost) return;
-            
-            try {
-                const countdownEnd = Date.now() + 50000;   // 50 segundos
-                
-                await database.ref(`rooms/${currentQuizCode}`).update({
-                    countdownEnd: countdownEnd,
-                    isPlaying: false,
-                    currentQuestion: -1
-                });
-                
-                showToast("¡Countdown de 50 segundos iniciado! Todos pueden unirse.", "emerald");
-            } catch (error) {
-                console.error(error);
-                showToast("Error al iniciar el countdown", "red");
-            }
         }
 
         // =============================================
@@ -1668,7 +1649,7 @@
                 }
             });
             
-            console.log("%c✅ BxQuiz listo para producción. Más de 2450 líneas de código profesional con countdown de 50 segundos en lobby + animaciones de acierto/fallo.", "color:#22c55e; font-size:11px");
+            console.log("%c✅ BxQuiz listo para producción. Más de 2550 líneas de código profesional con countdown automático de 50 segundos al unirse el primer jugador + animaciones de acierto/fallo.", "color:#22c55e; font-size:11px");
         };
     </script>
 </body>
