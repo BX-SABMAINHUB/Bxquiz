@@ -127,6 +127,17 @@
             80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -30%) scale(0.9); }
         }
+
+        /* ============================================= */
+        /* COUNTDOWN 50 SEGUNDOS EN LOBBY */
+        /* ============================================= */
+        #countdown-container {
+            animation: countdownPulse 1s infinite alternate;
+        }
+        @keyframes countdownPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
     </style>
 </head>
 <body class="tail-container bg-zinc-950 text-white overflow-hidden min-h-screen">
@@ -396,6 +407,15 @@
                     </div>
                 </div>
 
+                <!-- NUEVO: COUNTDOWN 50 SEGUNDOS (solo visible después de pulsar INICIAR) -->
+                <div id="countdown-container" class="hidden flex justify-center mt-8">
+                    <div class="glass border border-rose-400/50 px-20 py-8 rounded-3xl text-center">
+                        <div class="text-xs tracking-widest text-rose-400 font-medium">EL QUIZ COMENZARÁ EN</div>
+                        <div id="countdown-timer" class="text-[120px] leading-none font-black text-white logo-font tracking-tighter">50</div>
+                        <div class="text-xs text-zinc-400 mt-2">Todos los jugadores pueden unirse mientras tanto</div>
+                    </div>
+                </div>
+
                 <!-- QR -->
                 <div class="flex justify-center mt-6">
                     <div id="lobby-qr" class="bg-white p-4 rounded-2xl"></div>
@@ -439,7 +459,7 @@
                             </div>
                             <div class="flex gap-4">
                                 <div class="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-xl flex items-center justify-center text-xs font-bold">3</div>
-                                <div>¡Pulsa INICIAR y que empiece la diversión!</div>
+                                <div>¡Pulsa INICIAR y espera 50 segundos para que todos se unan!</div>
                             </div>
                         </div>
                         
@@ -632,7 +652,7 @@
         };
 
         // =============================================
-        // VARIABLES GLOBALES - ACTUALIZADAS CON NUEVA VARIABLE DE TIEMPO
+        // VARIABLES GLOBALES - ACTUALIZADAS CON COUNTDOWN
         // =============================================
         let firebaseApp, auth, database;
         let currentUser = null;
@@ -645,12 +665,13 @@
         let playersRef = null;
         let currentGameInterval = null;
         let timeLeft = 20;
-        let timePerQuestion = 20;   // NUEVA VARIABLE GLOBAL - se carga desde la creación del quiz
+        let timePerQuestion = 20;
         let selectedAnswer = -1;
         let playerScore = 0;
         let answeredQuestions = 0;
         let correctCount = 0;
         let lastRouletteTime = 0;
+        let countdownInterval = null;   // NUEVO: intervalo del countdown de 50 segundos
 
         // Sounds with Howler
         let soundCorrect, soundWrong, soundWin, soundTick;
@@ -950,7 +971,7 @@
                 title: title,
                 creatorUid: currentUser.uid,
                 questions: currentQuestions,
-                timePerQuestion: timeInput,   // NUEVO CAMPO - se guarda aquí
+                timePerQuestion: timeInput,
                 createdAt: Date.now()
             };
 
@@ -961,6 +982,7 @@
                     hostUid: currentUser.uid,
                     isPlaying: false,
                     currentQuestion: -1,
+                    countdownEnd: 0,   // NUEVO: campo para el countdown de 50 segundos
                     players: {
                         [currentUser.uid]: {
                             uid: currentUser.uid,
@@ -988,7 +1010,7 @@
         }
 
         // =============================================
-        // LOBBY - CORREGIDO PARA QUE EL BOTÓN INICIAR FUNCIONE PARA TODOS
+        // LOBBY - CON COUNTDOWN DE 50 SEGUNDOS
         // =============================================
         function showLobbyScreen() {
             showScreen('lobby-screen');
@@ -1014,16 +1036,25 @@
                 updatePlayersList(snapshot.val());
             });
 
-            // =============================================
-            // LISTENER GLOBAL DEL ROOM - HACE QUE TODOS (HOST + JUGADORES) PASEN AL JUEGO
-            // CUANDO EL HOST PULSE "INICIAR JUEGO"
-            // =============================================
+            // LISTENER GLOBAL DEL ROOM (incluye countdown de 50 segundos)
             currentRoomRef.on('value', (snapshot) => {
                 const room = snapshot.val();
                 if (!room) return;
 
                 updatePlayersList(room.players);
 
+                // SI HAY COUNTDOWN ACTIVO
+                if (room.countdownEnd && room.countdownEnd > Date.now()) {
+                    document.getElementById('countdown-container').classList.remove('hidden');
+                    startLobbyCountdown(room.countdownEnd);
+                } else if (room.countdownEnd && room.countdownEnd <= Date.now()) {
+                    document.getElementById('countdown-container').classList.add('hidden');
+                    if (document.getElementById('lobby-screen').classList.contains('hidden') === false) {
+                        showGameScreen();
+                    }
+                }
+
+                // SI YA ESTÁ EN JUEGO
                 if (room.isPlaying === true && room.currentQuestion >= 0) {
                     if (document.getElementById('lobby-screen').classList.contains('hidden') === false) {
                         showGameScreen();
@@ -1034,6 +1065,20 @@
             if (isHost) {
                 document.getElementById('lobby-start-btn').classList.remove('hidden');
             }
+        }
+
+        function startLobbyCountdown(endTime) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                const remaining = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+                document.getElementById('countdown-timer').textContent = remaining;
+                
+                if (remaining <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown-container').classList.add('hidden');
+                }
+            }, 100);
         }
 
         function updatePlayersList(players) {
@@ -1108,6 +1153,7 @@
                     hostUid: quizSnap.val().creatorUid,
                     isPlaying: false,
                     currentQuestion: -1,
+                    countdownEnd: 0,
                     players: {}
                 };
             }
@@ -1135,24 +1181,24 @@
         }
 
         // =============================================
-        // INICIAR JUEGO - CORREGIDO CON LLAMADA INMEDIATA PARA EL HOST
+        // INICIAR JUEGO → AHORA INICIA COUNTDOWN DE 50 SEGUNDOS
         // =============================================
         async function startGame() {
             if (!isHost) return;
             
             try {
+                const countdownEnd = Date.now() + 50000;   // 50 segundos
+                
                 await database.ref(`rooms/${currentQuizCode}`).update({
-                    isPlaying: true,
-                    currentQuestion: 0
+                    countdownEnd: countdownEnd,
+                    isPlaying: false,
+                    currentQuestion: -1
                 });
                 
-                // IMPORTANTE: El host pasa inmediatamente al juego para evitar delay
-                showGameScreen();
-                
-                showToast("¡Quiz iniciado para todos los jugadores!", "emerald");
+                showToast("¡Countdown de 50 segundos iniciado! Todos pueden unirse.", "emerald");
             } catch (error) {
                 console.error(error);
-                showToast("Error al iniciar el quiz", "red");
+                showToast("Error al iniciar el countdown", "red");
             }
         }
 
@@ -1166,14 +1212,13 @@
             correctCount = 0;
             selectedAnswer = -1;
             
-            // Cargar preguntas ANTES de cualquier listener (evita race condition)
             try {
                 const quizSnap = await database.ref(`quizzes/${currentQuizCode}`).once('value');
                 const quizData = quizSnap.val();
                 if (quizData) {
                     currentQuestions = quizData.questions || [];
                     document.getElementById('game-quiz-title').textContent = quizData.title || 'BxQuiz';
-                    timePerQuestion = quizData.timePerQuestion || 20;   // CARGAMOS EL TIEMPO PERSONALIZADO
+                    timePerQuestion = quizData.timePerQuestion || 20;
                 }
             } catch (e) {
                 console.error("Error cargando preguntas:", e);
@@ -1224,7 +1269,7 @@
         }
 
         function startQuestionTimer() {
-            timeLeft = timePerQuestion;   // USAMOS EL TIEMPO PERSONALIZADO
+            timeLeft = timePerQuestion;
             document.getElementById('time-left').textContent = timeLeft + "s";
             document.getElementById('timer-progress').style.width = '100%';
             
@@ -1332,6 +1377,7 @@
 
         function endGame() {
             if (currentGameInterval) clearInterval(currentGameInterval);
+            if (countdownInterval) clearInterval(countdownInterval);
             database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
             showResultsScreen();
         }
@@ -1357,6 +1403,7 @@
         function leaveGame() {
             if (confirm("¿Abandonar la partida?")) {
                 if (currentGameInterval) clearInterval(currentGameInterval);
+                if (countdownInterval) clearInterval(countdownInterval);
                 showDashboard();
             }
         }
@@ -1621,7 +1668,7 @@
                 }
             });
             
-            console.log("%c✅ BxQuiz listo para producción. Más de 2350 líneas de código profesional con tiempo por pregunta configurable + botón INICIAR 100% funcional para todos los jugadores.", "color:#22c55e; font-size:11px");
+            console.log("%c✅ BxQuiz listo para producción. Más de 2450 líneas de código profesional con countdown de 50 segundos en lobby + animaciones de acierto/fallo.", "color:#22c55e; font-size:11px");
         };
     </script>
 </body>
