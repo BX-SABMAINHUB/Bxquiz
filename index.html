@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BxQuiz - El Kahoot Definitivo</title>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -13,678 +13,558 @@
   <!-- QR Code -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-  <!-- Tailwind CSS CDN (para diseño rápido y profesional) -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Confetti para celebraciones -->
+  <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-  <!-- Howler.js para sonidos (opcional, pero lo ponemos para que sea pro) -->
+  <!-- Howler.js para sonidos -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
     :root {
-      --bg-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      --card-bg: rgba(255,255,255,0.08);
-      --card-border: rgba(255,255,255,0.15);
-      --accent: #00d4ff;
-      --success: #00ff9d;
-      --danger: #ff4d4d;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      --primary: #6366f1;
+      --accent: #a855f7;
+      --success: #22c55e;
+      --danger: #ef4444;
     }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: var(--bg-gradient);
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: white;
       min-height: 100vh;
       overflow-x: hidden;
     }
 
     .glass {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--card-border);
-      border-radius: 24px;
-    }
-
-    .btn {
-      transition: all 0.3s ease;
-      transform: translateY(0);
-    }
-
-    .btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 30px rgba(0,212,255,0.4);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     }
 
     .section {
       display: none;
-      animation: fadeIn 0.8s ease forwards;
+      animation: fadeInScale 0.6s ease forwards;
     }
 
     .active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
     }
 
     .avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
+      width: 72px;
+      height: 72px;
+      border-radius: 9999px;
       object-fit: cover;
       border: 4px solid white;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+      transition: all 0.4s ease;
+    }
+
+    .avatar:hover {
+      transform: scale(1.15);
+      box-shadow: 0 20px 25px -5px rgba(99,102,241,0.5);
     }
 
     .pack {
-      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .pack:hover {
-      transform: scale(1.08) rotate(3deg);
+      transform: scale(1.12) rotate(4deg);
     }
 
     .pack.open {
-      animation: packOpen 1.5s forwards;
+      animation: packOpenAnim 1.8s forwards;
     }
 
-    @keyframes packOpen {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.6) rotate(15deg); }
-      100% { transform: scale(0); opacity: 0; }
-    }
-
-    .roulette-container {
-      position: relative;
-      width: 400px;
-      height: 400px;
-      margin: 0 auto;
+    @keyframes packOpenAnim {
+      0% { transform: scale(1) rotate(0deg); }
+      40% { transform: scale(1.8) rotate(25deg); }
+      100% { transform: scale(0) rotate(45deg); opacity: 0; }
     }
 
     .roulette-wheel {
-      width: 100%;
-      height: 100%;
+      width: 380px;
+      height: 380px;
       border-radius: 50%;
       background: conic-gradient(
-        #ff6b6b 0deg 30deg,
-        #4ecdc4 30deg 60deg,
-        #45b7d1 60deg 90deg,
-        #96c93d 90deg 120deg,
-        #feca57 120deg 150deg,
-        #ff9ff3 150deg 180deg,
-        #ff9f1c 180deg 210deg,
-        #ff6b6b 210deg 240deg,
-        #4ecdc4 240deg 270deg,
-        #45b7d1 270deg 300deg,
-        #96c93d 300deg 330deg,
-        #feca57 330deg 360deg
+        #f43f5e 0deg 30deg,
+        #8b5cf6 30deg 60deg,
+        #06b67f 60deg 90deg,
+        #eab308 90deg 120deg,
+        #3b82f6 120deg 150deg,
+        #ec4899 150deg 180deg,
+        #f43f5e 180deg 210deg,
+        #8b5cf6 210deg 240deg,
+        #06b67f 240deg 270deg,
+        #eab308 270deg 300deg,
+        #3b82f6 300deg 330deg,
+        #ec4899 330deg 360deg
       );
-      transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+      transition: transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
 
-    .roulette-pointer {
+    .pointer {
       position: absolute;
-      top: -30px;
+      top: -25px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 40px solid #fff;
-      filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-      z-index: 10;
+      border-left: 25px solid transparent;
+      border-right: 25px solid transparent;
+      border-bottom: 50px solid #fff;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+      z-index: 20;
     }
   </style>
 </head>
-<body>
+<body class="min-h-screen">
 
-<div class="min-h-screen p-6 md:p-12">
-  <!-- Fondo animado (partículas sutiles) -->
-  <div class="fixed inset-0 pointer-events-none">
-    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30"></div>
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- AUTH SCREEN -->
+  <div id="authScreen" class="section active">
+    <div class="glass max-w-md mx-auto mt-20 p-12 rounded-3xl text-center">
+      <h1 class="text-6xl font-black mb-10 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">BxQuiz</h1>
+      <input id="authEmail" type="email" placeholder="Correo electrónico" class="w-full px-8 py-5 bg-white/10 border border-white/20 rounded-3xl text-lg mb-4 focus:outline-none focus:border-indigo-400" />
+      <input id="authPassword" type="password" placeholder="Contraseña" class="w-full px-8 py-5 bg-white/10 border border-white/20 rounded-3xl text-lg mb-8 focus:outline-none focus:border-indigo-400" />
+      
+      <div class="grid grid-cols-2 gap-4">
+        <button onclick="loginUser()" class="py-6 bg-indigo-600 hover:bg-indigo-700 rounded-3xl text-xl font-semibold transition">Iniciar Sesión</button>
+        <button onclick="registerUser()" class="py-6 bg-purple-600 hover:bg-purple-700 rounded-3xl text-xl font-semibold transition">Registrarse</button>
+      </div>
+      <p id="authError" class="text-red-400 mt-6 text-sm font-medium"></p>
+    </div>
   </div>
 
-  <div class="relative z-10 max-w-5xl mx-auto">
-
-    <!-- LOGIN / REGISTRO -->
-    <div id="authScreen" class="section active">
-      <div class="glass max-w-lg mx-auto p-10 md:p-16 rounded-3xl shadow-2xl">
-        <h1 class="text-5xl md:text-6xl font-extrabold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">
-          BxQuiz
-        </h1>
-
-        <div class="space-y-6">
-          <input id="loginEmail" type="email" placeholder="Correo electrónico" class="w-full px-6 py-5 bg-white/10 border border-white/20 rounded-2xl focus:outline-none focus:border-cyan-400 text-lg placeholder-white/50 transition" />
-          <input id="loginPassword" type="password" placeholder="Contraseña" class="w-full px-6 py-5 bg-white/10 border border-white/20 rounded-2xl focus:outline-none focus:border-cyan-400 text-lg placeholder-white/50 transition" />
-          
-          <div class="flex flex-col md:flex-row gap-4">
-            <button onclick="loginUser()" class="flex-1 py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl text-xl font-semibold hover:opacity-90 transition">Iniciar Sesión</button>
-            <button onclick="registerUser()" class="flex-1 py-5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl text-xl font-semibold hover:opacity-90 transition">Registrarse</button>
-          </div>
-
-          <p id="authError" class="text-center text-red-400 font-medium min-h-[1.5rem]"></p>
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="section hidden">
+    <div class="flex justify-between items-center mb-12">
+      <h1 class="text-5xl font-bold">BxQuiz</h1>
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-3 bg-white/10 px-8 py-4 rounded-3xl">
+          <span class="text-3xl">💎</span>
+          <span id="coinDisplay" class="text-3xl font-bold">0</span>
         </div>
+        <button onclick="showAvatarSelection()" class="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-3xl transition">Avatares</button>
+        <button onclick="logoutUser()" class="px-8 py-4 bg-red-600/80 hover:bg-red-700 rounded-3xl transition">Salir</button>
       </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboardScreen" class="section hidden">
-      <div class="flex flex-col md:flex-row justify-between items-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500">BxQuiz</h1>
-        
-        <div class="flex items-center gap-6 mt-6 md:mt-0">
-          <div class="flex items-center gap-3 bg-white/10 px-6 py-3 rounded-2xl">
-            <span class="text-2xl">💰</span>
-            <span id="coinBalance" class="text-xl font-bold">0</span>
-          </div>
-          <button onclick="logoutUser()" class="px-8 py-4 bg-red-600/80 hover:bg-red-700 rounded-2xl text-lg font-medium transition">Cerrar Sesión</button>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div onclick="showCreateQuizScreen()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-105 transition-all">
+        <div class="text-7xl mb-6">✍️</div>
+        <h2 class="text-3xl font-bold mb-3">Crear Quiz</h2>
+        <p class="text-white/70">Diseña tu propio quiz y comparte el código</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Crear Quiz -->
-        <div onclick="showCreateQuizScreen()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-[1.03] transition">
-          <div class="text-6xl mb-6">✨</div>
-          <h2 class="text-2xl font-bold mb-3">Crear Quiz</h2>
-          <p class="text-white/70">Diseña tu propio Kahoot y reta a tus amigos</p>
-        </div>
-
-        <!-- Unirse por código -->
-        <div onclick="showJoinByCode()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-[1.03] transition">
-          <div class="text-6xl mb-6">🔑</div>
-          <h2 class="text-2xl font-bold mb-3">Unirse por Código</h2>
-          <p class="text-white/70">Introduce el código del quiz</p>
-        </div>
-
-        <!-- Unirse por QR -->
-        <div onclick="showJoinByQR()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-[1.03] transition">
-          <div class="text-6xl mb-6">📱</div>
-          <h2 class="text-2xl font-bold mb-3">Escanear QR</h2>
-          <p class="text-white/70">Usa la cámara para unirte rápido</p>
-        </div>
+      <div onclick="showJoinByCodeScreen()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-105 transition-all">
+        <div class="text-7xl mb-6">🔑</div>
+        <h2 class="text-3xl font-bold mb-3">Unirse por Código</h2>
+        <p class="text-white/70">Introduce el código del quiz</p>
       </div>
 
-      <!-- Tienda de sobres -->
-      <div class="mt-16">
-        <h2 class="text-3xl font-bold mb-8 text-center">Tienda de Sobres</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div onclick="buyPack(1)" class="glass p-8 rounded-3xl cursor-pointer hover:scale-105 transition pack" id="pack1">
-            <div class="text-7xl mb-4">📦</div>
-            <h3 class="text-2xl font-bold mb-2">Sobre Básico</h3>
-            <p class="text-xl mb-4">10 💰</p>
-            <p class="text-white/70 text-sm">1 avatar aleatorio</p>
-          </div>
+      <div onclick="showJoinByQR()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-105 transition-all">
+        <div class="text-7xl mb-6">📱</div>
+        <h2 class="text-3xl font-bold mb-3">Escanear QR</h2>
+        <p class="text-white/70">Únete escaneando el código QR</p>
+      </div>
 
-          <div onclick="buyPack(2)" class="glass p-8 rounded-3xl cursor-pointer hover:scale-105 transition pack" id="pack2">
-            <div class="text-7xl mb-4">📦📦</div>
-            <h3 class="text-2xl font-bold mb-2">Sobre Épico</h3>
-            <p class="text-xl mb-4">25 💰</p>
-            <p class="text-white/70 text-sm">3 avatares + 5 monedas extra</p>
-          </div>
-
-          <div onclick="buyPack(3)" class="glass p-8 rounded-3xl cursor-pointer hover:scale-105 transition pack" id="pack3">
-            <div class="text-7xl mb-4">📦📦📦</div>
-            <h3 class="text-2xl font-bold mb-2">Sobre Legendario</h3>
-            <p class="text-xl mb-4">50 💰</p>
-            <p class="text-white/70 text-sm">5 avatares + 20 monedas + animación especial</p>
-          </div>
-        </div>
+      <div onclick="showShop()" class="glass p-10 rounded-3xl cursor-pointer hover:scale-105 transition-all">
+        <div class="text-7xl mb-6">🛍️</div>
+        <h2 class="text-3xl font-bold mb-3">Tienda</h2>
+        <p class="text-white/70">Compra sobres y avatares</p>
       </div>
     </div>
-
-    <!-- CREAR QUIZ -->
-    <div id="createQuizScreen" class="section hidden">
-      <h2 class="text-4xl font-bold text-center mb-12">Crear tu Quiz</h2>
-
-      <div class="glass p-10 rounded-3xl">
-        <input id="quizTitleInput" placeholder="Título del Quiz" class="w-full px-8 py-6 bg-white/5 border border-white/20 rounded-2xl text-2xl mb-10 focus:outline-none focus:border-cyan-400 transition" />
-
-        <div id="questionsContainer" class="space-y-10"></div>
-
-        <div class="flex flex-col md:flex-row gap-6 mt-12">
-          <button onclick="addQuestionField()" class="flex-1 py-6 bg-purple-600 hover:bg-purple-700 rounded-2xl text-xl font-medium transition">+ Añadir Pregunta</button>
-          <button onclick="generateQuizCode()" class="flex-1 py-6 bg-green-600 hover:bg-green-700 rounded-2xl text-xl font-medium transition">Guardar y Generar Código</button>
-        </div>
-
-        <p id="createQuizError" class="text-red-400 text-center mt-6 min-h-[1.5rem]"></p>
-      </div>
-
-      <div id="quizCreatedInfo" class="hidden mt-12 text-center">
-        <h3 class="text-3xl font-bold mb-6">¡Quiz Creado!</h3>
-        <p class="text-2xl mb-4">Código: <span id="generatedCode" class="text-yellow-400 font-mono"></span></p>
-        <div id="qrContainer" class="my-8 flex justify-center"></div>
-        <p class="text-lg mb-6">Comparte este enlace o QR con tus amigos:</p>
-        <a id="shareLink" target="_blank" class="text-cyan-400 underline text-xl"></a>
-      </div>
-    </div>
-
-    <!-- LOBBY -->
-    <div id="lobbyScreen" class="section hidden">
-      <h2 class="text-4xl font-bold text-center mb-6">Sala de Espera</h2>
-      <p class="text-center text-xl mb-8">Código: <span id="lobbyGameCode" class="font-mono text-yellow-400 text-2xl"></span></p>
-
-      <div class="glass p-10 rounded-3xl">
-        <h3 class="text-2xl font-semibold mb-6">Jugadores conectados (<span id="playerCount">0</span>)</h3>
-        <div id="playersList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-
-        <div id="creatorStartButton" class="hidden mt-12 text-center">
-          <button onclick="startTheQuiz()" class="px-16 py-8 bg-gradient-to-r from-green-500 to-emerald-600 text-3xl font-bold rounded-3xl hover:scale-105 transition">
-            INICIAR QUIZ
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- JUEGO ACTIVO -->
-    <div id="gameScreen" class="section hidden">
-      <div class="flex justify-between items-center mb-10">
-        <h2 class="text-2xl font-medium">Pregunta <span id="questionNum">1</span>/<span id="totalQuestions">?</span></h2>
-        <div class="w-64 h-4 bg-white/20 rounded-full overflow-hidden">
-          <div id="timerProgress" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 w-full transition-all duration-1000"></div>
-        </div>
-      </div>
-
-      <h3 id="currentQuestionText" class="text-3xl md:text-4xl font-semibold text-center mb-16 min-h-[120px]"></h3>
-
-      <div id="answerOptions" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-
-      <div id="answerResult" class="text-center mt-12 text-3xl font-bold min-h-[80px]"></div>
-    </div>
-
-    <!-- RULETA DIARIA -->
-    <div id="dailyRouletteScreen" class="section hidden">
-      <h2 class="text-5xl font-extrabold text-center mb-16 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500">
-        Ruleta Diaria
-      </h2>
-
-      <div class="roulette-container">
-        <div class="roulette-pointer"></div>
-        <div id="rouletteWheel" class="roulette-wheel"></div>
-      </div>
-
-      <button onclick="spinDailyRoulette()" id="spinRouletteBtn" class="mt-16 mx-auto block px-20 py-8 bg-gradient-to-r from-yellow-500 to-orange-600 text-3xl font-bold rounded-3xl hover:scale-105 transition shadow-2xl">
-        GIRAR RULETA
-      </button>
-
-      <p id="rouletteCooldownText" class="text-center mt-8 text-xl text-yellow-300 hidden">
-        Próxima ruleta disponible en: <span id="rouletteCountdown"></span>
-      </p>
-    </div>
-
-    <!-- SELECCIÓN DE AVATAR -->
-    <div id="avatarSelectionScreen" class="section hidden">
-      <h2 class="text-4xl font-bold text-center mb-12">Elige tu Avatar</h2>
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
-        <!-- Avatares (se generan dinámicamente con JS) -->
-      </div>
-      <button onclick="saveAvatarAndReturn()" class="mt-12 mx-auto block px-16 py-6 bg-cyan-600 hover:bg-cyan-700 rounded-3xl text-2xl font-bold transition">
-        Guardar y Volver
-      </button>
-    </div>
-
   </div>
 
-  <!-- Sonidos (opcionales) -->
-  <script>
-    const correctSound = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'], volume: 0.5 });
-    const wrongSound = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'], volume: 0.5 });
-    const winSound = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3'], volume: 0.7 });
-  </script>
+  <!-- CREAR QUIZ -->
+  <div id="createQuizScreen" class="section hidden">
+    <h2 class="text-4xl font-bold text-center mb-12">Crear Nuevo Quiz</h2>
+    <div class="glass p-12 rounded-3xl">
+      <input id="quizTitle" placeholder="Título del quiz" class="w-full px-8 py-6 bg-white/10 border border-white/30 rounded-3xl text-2xl mb-12 focus:outline-none focus:border-indigo-400" />
 
-  <script>
-    // ====================================================
-    // FIREBASE CONFIG (tu config real)
-    // ====================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyD13N4-9MjTrmlPwGP7mves0Exje4v2ACw",
-      authDomain: "kahoot-8529e.firebaseapp.com",
-      databaseURL: "https://kahoot-8529e-default-rtdb.firebaseio.com",
-      projectId: "kahoot-8529e",
-      storageBucket: "kahoot-8529e.firebasestorage.app",
-      messagingSenderId: "313414356056",
-      appId: "1:313414356056:web:4aab4587f7df9393008e2d",
-      measurementId: "G-8T4CPC1BQ3"
-    };
+      <div id="questionsContainer" class="space-y-10"></div>
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
+      <div class="flex gap-6 mt-12">
+        <button onclick="addQuestionToForm()" class="flex-1 py-6 bg-violet-600 hover:bg-violet-700 rounded-3xl text-xl font-semibold transition">+ Añadir Pregunta</button>
+        <button onclick="saveQuizAndGenerateCode()" class="flex-1 py-6 bg-emerald-600 hover:bg-emerald-700 rounded-3xl text-xl font-semibold transition">Guardar y Generar Código</button>
+      </div>
+    </div>
+  </div>
 
-    // ====================================================
-    // VARIABLES GLOBALES
-    // ====================================================
-    let currentUser = null;
-    let currentGame = null;
-    let currentGameCode = null;
-    let isGameCreator = false;
-    let selectedAvatar = localStorage.getItem('bxquiz_avatar') || 'avatar1';
-    let coins = 0;
-    let lastRouletteTime = localStorage.getItem('bxquiz_last_roulette') || 0;
-    let timerInterval = null;
+  <!-- LOBBY -->
+  <div id="lobbyScreen" class="section hidden">
+    <h2 class="text-5xl font-bold text-center mb-6">Lobby</h2>
+    <p class="text-center text-2xl mb-8">Código: <span id="lobbyCodeDisplay" class="font-mono text-3xl text-yellow-400"></span></p>
 
-    const AVATARS = [
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=1',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=2',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=3',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=4',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=5',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=6',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=7',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=8',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=9',
-      'https://api.dicebear.com/7.x/avataaars/svg?seed=10'
-    ];
+    <div class="glass p-12 rounded-3xl">
+      <h3 class="text-2xl font-semibold mb-8">Jugadores conectados (<span id="lobbyPlayerCount">0</span>)</h3>
+      <div id="lobbyPlayersGrid" class="grid grid-cols-2 md:grid-cols-4 gap-8"></div>
 
-    // ====================================================
-    // AUTH LISTENER
-    // ====================================================
-    auth.onAuthStateChanged(user => {
-      currentUser = user;
-      if (user) {
-        loadUserData();
-        showSection('dashboard');
-      } else {
-        showSection('authScreen');
-      }
+      <div id="startQuizButton" class="hidden mt-12 text-center">
+        <button onclick="startTheGame()" class="px-20 py-8 bg-gradient-to-r from-emerald-500 to-teal-600 text-3xl font-bold rounded-3xl hover:scale-105 transition shadow-2xl">
+          INICIAR EL QUIZ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JUEGO -->
+  <div id="gameScreen" class="section hidden">
+    <div class="flex justify-between items-center mb-10">
+      <div class="text-2xl font-medium">Pregunta <span id="currentQNum">1</span>/<span id="totalQNum">10</span></div>
+      <div class="flex items-center gap-4">
+        <div class="text-2xl">⏱️</div>
+        <div id="timerDisplay" class="text-4xl font-bold text-yellow-400">20</div>
+      </div>
+    </div>
+
+    <h3 id="gameQuestionText" class="text-3xl font-semibold text-center min-h-[100px] mb-16"></h3>
+
+    <div id="gameOptions" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+    <div id="gameFeedback" class="text-center mt-16 text-4xl font-bold min-h-[80px]"></div>
+  </div>
+
+  <!-- RULETA -->
+  <div id="rouletteScreen" class="section hidden">
+    <h2 class="text-5xl font-bold text-center mb-16">Ruleta Diaria</h2>
+    <div class="roulette-container mx-auto">
+      <div class="pointer"></div>
+      <div id="rouletteWheel" class="roulette-wheel"></div>
+    </div>
+    <button onclick="spinTheRoulette()" class="mt-16 mx-auto block px-24 py-8 bg-gradient-to-r from-amber-400 to-orange-500 text-3xl font-bold rounded-3xl hover:scale-110 transition shadow-2xl">
+      GIRAR RULETA
+    </button>
+  </div>
+
+  <!-- TIENDA -->
+  <div id="shopScreen" class="section hidden">
+    <h2 class="text-4xl font-bold text-center mb-12">Tienda de Sobres</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div onclick="openPack(10)" class="glass p-10 rounded-3xl cursor-pointer hover:scale-105 transition pack text-center">
+        <div class="text-8xl mb-6">📦</div>
+        <h3 class="text-2xl font-bold">Sobre Básico</h3>
+        <p class="text-4xl my-4">10 💰</p>
+        <p class="text-sm text-white/70">1 avatar aleatorio</p>
+      </div>
+      <!-- Más sobres se pueden añadir fácilmente -->
+    </div>
+  </div>
+
+  <!-- SELECCIÓN DE AVATAR -->
+  <div id="avatarScreen" class="section hidden">
+    <h2 class="text-4xl font-bold text-center mb-12">Elige tu Avatar</h2>
+    <div id="avatarGallery" class="grid grid-cols-3 md:grid-cols-5 gap-8"></div>
+    <button onclick="saveSelectedAvatar()" class="mt-16 mx-auto block px-20 py-6 bg-indigo-600 hover:bg-indigo-700 rounded-3xl text-2xl font-bold transition">
+      Guardar Avatar
+    </button>
+  </div>
+
+</div>
+
+<script>
+// ========================================================
+// FIREBASE CONFIG
+// ========================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyD13N4-9MjTrmlPwGP7mves0Exje4v2ACw",
+  authDomain: "kahoot-8529e.firebaseapp.com",
+  databaseURL: "https://kahoot-8529e-default-rtdb.firebaseio.com",
+  projectId: "kahoot-8529e",
+  storageBucket: "kahoot-8529e.firebasestorage.app",
+  messagingSenderId: "313414356056",
+  appId: "1:313414356056:web:4aab4587f7df9393008e2d",
+  measurementId: "G-8T4CPC1BQ3"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+
+// ========================================================
+// VARIABLES GLOBALES
+// ========================================================
+let currentUser = null;
+let currentGameCode = null;
+let isCreator = false;
+let selectedAvatar = localStorage.getItem('bxquiz_avatar') || 'https://api.dicebear.com/7.x/avataaars/svg?seed=1';
+let coins = 0;
+let lastRouletteTime = parseInt(localStorage.getItem('bxquiz_last_roulette') || '0');
+
+// ========================================================
+// SONIDOS
+// ========================================================
+const correctSound = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'] });
+const wrongSound = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'] });
+const winSound = new Howl({ src: ['https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3'] });
+
+// ========================================================
+// NAVEGACIÓN
+// ========================================================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ========================================================
+// AUTH
+// ========================================================
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if (user) {
+    loadUserProfile();
+    showSection('dashboard');
+  } else {
+    showSection('authScreen');
+  }
+});
+
+function loginUser() {
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+  auth.signInWithEmailAndPassword(email, password).catch(e => alert(e.message));
+}
+
+function registerUser() {
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(cred => {
+      database.ref('users/' + cred.user.uid).set({
+        email: cred.user.email,
+        coins: 100,
+        avatar: selectedAvatar,
+        lastRoulette: 0
+      });
+    })
+    .catch(e => alert(e.message));
+}
+
+function logoutUser() {
+  auth.signOut();
+}
+
+function loadUserProfile() {
+  database.ref('users/' + currentUser.uid).once('value', snap => {
+    const data = snap.val() || {};
+    coins = data.coins || 0;
+    selectedAvatar = data.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=1';
+    lastRouletteTime = data.lastRoulette || 0;
+  });
+}
+
+// ========================================================
+// DASHBOARD
+// ========================================================
+function showCreateQuizScreen() {
+  showSection('createQuizScreen');
+  document.getElementById('questionsContainer').innerHTML = '';
+  addQuestionField();
+}
+
+function showJoinByCodeScreen() {
+  alert("En esta versión simplificada, introduce el código en la URL: ?code=XXXXXX");
+  // Puedes expandir esto más adelante
+}
+
+function showJoinByQR() {
+  alert("Escanea el QR desde la pantalla de crear quiz");
+}
+
+function showShop() {
+  showSection('shopScreen');
+}
+
+function showAvatarSelection() {
+  showSection('avatarScreen');
+  renderAvatarGallery();
+}
+
+// ========================================================
+// CREAR QUIZ
+// ========================================================
+let questionCount = 0;
+
+function addQuestionField() {
+  questionCount++;
+  const container = document.getElementById('questionsContainer');
+  const div = document.createElement('div');
+  div.className = "glass p-8 rounded-3xl";
+  div.innerHTML = `
+    <h3 class="font-semibold text-xl mb-6">Pregunta ${questionCount}</h3>
+    <input class="question-input w-full px-6 py-5 bg-white/10 rounded-2xl mb-8 text-lg" placeholder="Escribe la pregunta aquí..." />
+    <div class="grid grid-cols-2 gap-6">
+      <div class="flex items-center gap-4">
+        <input class="option-input flex-1 px-6 py-4 bg-white/10 rounded-2xl" placeholder="Opción 1" />
+        <input type="radio" name="correct${questionCount}" value="0" class="w-6 h-6 accent-indigo-400" />
+      </div>
+      <div class="flex items-center gap-4">
+        <input class="option-input flex-1 px-6 py-4 bg-white/10 rounded-2xl" placeholder="Opción 2" />
+        <input type="radio" name="correct${questionCount}" value="1" class="w-6 h-6 accent-indigo-400" />
+      </div>
+      <div class="flex items-center gap-4">
+        <input class="option-input flex-1 px-6 py-4 bg-white/10 rounded-2xl" placeholder="Opción 3" />
+        <input type="radio" name="correct${questionCount}" value="2" class="w-6 h-6 accent-indigo-400" />
+      </div>
+      <div class="flex items-center gap-4">
+        <input class="option-input flex-1 px-6 py-4 bg-white/10 rounded-2xl" placeholder="Opción 4" />
+        <input type="radio" name="correct${questionCount}" value="3" class="w-6 h-6 accent-indigo-400" />
+      </div>
+    </div>
+  `;
+  container.appendChild(div);
+}
+
+function saveQuizAndGenerateCode() {
+  const title = document.getElementById('quizTitle').value.trim();
+  if (!title) return alert("Pon un título al quiz");
+
+  const questions = [];
+  const blocks = document.getElementById('questionsContainer').children;
+  for (let block of blocks) {
+    const question = block.querySelector('.question-input').value.trim();
+    const options = Array.from(block.querySelectorAll('.option-input')).map(i => i.value.trim()).filter(Boolean);
+    const correctRadio = block.querySelector('input[type="radio"]:checked');
+    const correctIndex = correctRadio ? parseInt(correctRadio.value) : -1;
+
+    if (!question || options.length < 2 || correctIndex === -1) {
+      return alert("Completa todas las preguntas correctamente");
+    }
+
+    questions.push({
+      question,
+      options,
+      correct: correctIndex
     });
+  }
 
-    function loadUserData() {
-      db.ref(`users/${currentUser.uid}`).once('value', snap => {
-        const data = snap.val() || {};
-        coins = data.coins || 0;
-        selectedAvatar = data.avatar || AVATARS[0];
-        lastRouletteTime = data.lastRoulette || 0;
+  const gameCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
-        document.getElementById('coinBalance').textContent = coins;
-      });
-    }
+  database.ref(`games/${gameCode}`).set({
+    title,
+    creator: currentUser.uid,
+    creatorEmail: currentUser.email,
+    questions,
+    createdAt: Date.now(),
+    players: {},
+    currentQuestion: -1,
+    started: false,
+    ended: false
+  }).then(() => {
+    currentGameCode = gameCode;
+    showLobby(gameCode);
+  }).catch(err => alert("Error al guardar: " + err.message));
+}
 
-    // ====================================================
-    // LOGIN / REGISTER
-    // ====================================================
-    function loginUser() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      auth.signInWithEmailAndPassword(email, password)
-        .catch(err => document.getElementById('authError').textContent = err.message);
-    }
+// ========================================================
+// LOBBY
+// ========================================================
+function showLobby(gameCode) {
+  currentGameCode = gameCode;
+  showSection('lobbyScreen');
+  document.getElementById('lobbyGameCode').textContent = gameCode;
 
-    function registerUser() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(cred => {
-          db.ref(`users/${cred.user.uid}`).set({
-            email: cred.user.email,
-            coins: 50,
-            avatar: AVATARS[0],
-            lastRoulette: 0
-          });
-        })
-        .catch(err => document.getElementById('authError').textContent = err.message);
-    }
+  database.ref(`games/${gameCode}/players`).on('value', snap => {
+    const players = snap.val() || {};
+    const count = Object.keys(players).length;
+    document.getElementById('lobbyPlayerCount').textContent = count;
 
-    function logoutUser() {
-      auth.signOut();
-    }
-
-    // ====================================================
-    // DASHBOARD → TIENDA
-    // ====================================================
-    function buyPack(id) {
-      const prices = [10, 25, 50];
-      const price = prices[id-1];
-      if (coins < price) return alert("¡No tienes suficientes monedas!");
-
-      coins -= price;
-      db.ref(`users/${currentUser.uid}`).update({ coins });
-
-      document.getElementById('coinBalance').textContent = coins;
-
-      // Animación de apertura
-      const pack = document.getElementById(`pack${id}`);
-      pack.classList.add('open');
-
-      setTimeout(() => {
-        pack.classList.remove('open');
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-        alert(`¡Sobre abierto! Ganaste un avatar nuevo 🎉`);
-      }, 1500);
-    }
-
-    // ====================================================
-    // CREAR QUIZ
-    // ====================================================
-    let questionCounter = 0;
-
-    function addQuestionField() {
-      questionCounter++;
-      const container = document.getElementById('questionsContainer');
-      const block = document.createElement('div');
-      block.className = "glass p-8 rounded-3xl";
-      block.innerHTML = `
-        <h3 class="text-xl font-semibold mb-4">Pregunta ${questionCounter}</h3>
-        <input class="question-text w-full px-6 py-4 bg-white/5 rounded-2xl mb-6" placeholder="Escribe la pregunta aquí..." />
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="flex items-center gap-3">
-            <input class="option-input flex-1 px-5 py-3 bg-white/5 rounded-xl" placeholder="Opción 1" />
-            <input type="radio" name="correct${questionCounter}" value="0" class="w-6 h-6" />
-          </div>
-          <div class="flex items-center gap-3">
-            <input class="option-input flex-1 px-5 py-3 bg-white/5 rounded-xl" placeholder="Opción 2" />
-            <input type="radio" name="correct${questionCounter}" value="1" class="w-6 h-6" />
-          </div>
-          <div class="flex items-center gap-3">
-            <input class="option-input flex-1 px-5 py-3 bg-white/5 rounded-xl" placeholder="Opción 3" />
-            <input type="radio" name="correct${questionCounter}" value="2" class="w-6 h-6" />
-          </div>
-          <div class="flex items-center gap-3">
-            <input class="option-input flex-1 px-5 py-3 bg-white/5 rounded-xl" placeholder="Opción 4" />
-            <input type="radio" name="correct${questionCounter}" value="3" class="w-6 h-6" />
-          </div>
-        </div>
+    const grid = document.getElementById('lobbyPlayersGrid');
+    grid.innerHTML = '';
+    Object.values(players).forEach(p => {
+      const div = document.createElement('div');
+      div.className = "glass p-6 rounded-3xl text-center";
+      div.innerHTML = `
+        <img src="${p.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=1'}" class="avatar mx-auto mb-4" />
+        <div class="font-medium">${p.email.split('@')[0]}</div>
       `;
-      container.appendChild(block);
+      grid.appendChild(div);
+    });
+  });
+
+  // Mostrar botón Start si soy creador
+  database.ref(`games/${gameCode}`).once('value', snap => {
+    const game = snap.val();
+    if (game.creator === currentUser.uid) {
+      document.getElementById('startQuizButton').classList.remove('hidden');
     }
+  });
+}
 
-    function generateQuizCode() {
-      const title = document.getElementById('quizTitleInput').value.trim();
-      if (!title) return alert("¡Pon un título al quiz!");
+function startTheGame() {
+  database.ref(`games/${currentGameCode}`).update({
+    started: true,
+    currentQuestion: 0
+  });
+}
 
-      const questions = [];
-      const blocks = document.getElementById('questionsContainer').children;
-      for (let block of blocks) {
-        const questionText = block.querySelector('.question-text').value.trim();
-        const options = Array.from(block.querySelectorAll('.option-input')).map(inp => inp.value.trim()).filter(Boolean);
-        const correctRadio = block.querySelector('input[type="radio"]:checked');
-        const correctIndex = correctRadio ? parseInt(correctRadio.value) : -1;
-
-        if (!questionText || options.length < 2 || correctIndex < 0) {
-          return alert("Completa todas las preguntas con al menos 2 opciones y marca una correcta");
-        }
-
-        questions.push({
-          question: questionText,
-          options,
-          correct: correctIndex
-        });
-      }
-
-      const code = Math.random().toString(36).substring(2, 8).toUpperCase().toUpperCase();
-
-      db.ref(`games/${code}`).set({
-        title,
-        creator: currentUser.uid,
-        creatorEmail: currentUser.email,
-        questions,
-        createdAt: Date.now(),
-        players: {},
-        currentQuestion: -1,
-        started: false,
-        ended: false
-      }).then(() => {
-        currentGameCode = code;
-        showLobby(code);
-      }).catch(err => alert("Error al guardar quiz: " + err.message));
-    }
-
-    // ====================================================
-    // LOBBY
-    // ====================================================
-    function showLobby(code) {
-      currentGameCode = code;
-      showSection('lobbyScreen');
-      document.getElementById('lobbyGameCode').textContent = code;
-
-      // Escuchar jugadores en tiempo real
-      db.ref(`games/${code}/players`).on('value', snap => {
-        const players = snap.val() || {};
-        const count = Object.keys(players).length;
-        document.getElementById('playerCount').textContent = count;
-
-        const list = document.getElementById('playersList');
-        list.innerHTML = '';
-        Object.entries(players).forEach(([uid, p]) => {
-          const div = document.createElement('div');
-          div.className = "glass p-6 rounded-2xl text-center";
-          div.innerHTML = `
-            <img src="${p.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + uid}" class="avatar mx-auto mb-3" />
-            <div class="font-medium">${p.email.split('@')[0]}</div>
-            ${uid === currentUser.uid ? '<div class="text-xs text-cyan-400">(Tú)</div>' : ''}
-            ${p.uid === game.creator ? '<div class="text-xs text-yellow-400">👑 Creador</div>' : ''}
-          `;
-          list.appendChild(div);
-        });
-      });
-
-      // Comprobar si soy creador para mostrar botón Start
-      db.ref(`games/${code}`).once('value', snap => {
-        const game = snap.val();
-        if (game.creator === currentUser.uid) {
-          document.getElementById('startButtonContainer').classList.remove('hidden');
-        }
-      });
-    }
-
-    function startTheQuiz() {
-      db.ref(`games/${currentGameCode}`).update({ started: true, currentQuestion: 0 });
-    }
-
-    // ====================================================
-    // JUEGO
-    // ====================================================
-    function startGameLoop() {
-      showSection('gameScreen');
-
-      db.ref(`games/${currentGameCode}`).on('value', snap => {
-        const game = snap.val();
-        if (!game) return;
-
-        currentQuestionIndex = game.currentQuestion;
-
-        if (currentQuestionIndex >= 0 && currentQuestionIndex < game.questions.length) {
-          const q = game.questions[currentQuestionIndex];
-          document.getElementById('questionNum').textContent = currentQuestionIndex + 1;
-          document.getElementById('totalQuestions').textContent = game.questions.length;
-          document.getElementById('currentQuestionText').textContent = q.question;
-
-          const optionsDiv = document.getElementById('answerOptions');
-          optionsDiv.innerHTML = '';
-          q.options.forEach((opt, idx) => {
-            const btn = document.createElement('button');
-            btn.className = "w-full py-6 px-8 bg-white/10 hover:bg-white/20 rounded-2xl text-left text-lg transition";
-            btn.textContent = opt;
-            btn.onclick = () => answerQuestion(idx);
-            optionsDiv.appendChild(btn);
-          });
-
-          // Timer
-          let timeLeft = 20;
-          document.getElementById('timerProgress').style.width = '100%';
-          clearInterval(timerInterval);
-          timerInterval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timerProgress').style.width = (timeLeft / 20 * 100) + '%';
-            if (timeLeft <= 0) {
-              clearInterval(timerInterval);
-              document.getElementById('gameFeedback').textContent = "¡Tiempo agotado!";
-            }
-          }, 1000);
-        }
-      });
-    }
-
-    function answerQuestion(index) {
-      // Guardar respuesta del jugador
-      db.ref(`games/${currentGameCode}/players/${currentUser.uid}`).update({
-        lastAnswer: index,
-        answered: true
-      });
-
-      // Feedback visual
-      document.getElementById('gameFeedback').textContent = "¡Respuesta enviada!";
-    }
-
-    // ====================================================
-    // RULETA
-    // ====================================================
-    function spinDailyRoulette() {
-      const now = Date.now();
-      const cooldown = 5 * 60 * 60 * 1000; // 5 horas
-      if (now - lastRouletteTime < cooldown) {
-        const remaining = cooldown - (now - lastRouletteTime);
-        const hours = Math.floor(remaining / 3600000);
-        const minutes = Math.floor((remaining % 3600000) / 60000);
-        return alert(`Espera ${hours}h ${minutes}min para girar de nuevo`);
-      }
-
-      lastRouletteTime = now;
-      db.ref(`users/${currentUser.uid}`).update({ lastRoulette: now });
-
-      const wheel = document.getElementById('rouletteWheel');
-      const randomDeg = Math.floor(Math.random() * 360) + 720 * 5; // 5 vueltas + random
-      wheel.style.transform = `rotate(${randomDeg}deg)`;
-
-      setTimeout(() => {
-        const prizes = [0,0,0,0,0,0,0,0,5,5,5,1000];
-        const result = prizes[Math.floor(Math.random() * prizes.length)];
-        confetti({ particleCount: 200, spread: 120, origin: { y: 0.6 } });
-        alert(`¡Ganaste ${result} monedas!`);
-        coins += result;
-        db.ref(`users/${currentUser.uid}`).update({ coins });
-        document.getElementById('coinBalance').textContent = coins;
-      }, 5000);
-    }
-
-    // ====================================================
-    // INICIALIZACIÓN Y UTILIDADES
-    // ====================================================
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    // Iniciar al cargar
-    window.onload = () => {
-      // Firebase ya inicializado
+// ========================================================
+// AVATAR SELECTION
+// ========================================================
+function renderAvatarGallery() {
+  const container = document.getElementById('avatarGallery');
+  container.innerHTML = '';
+  AVATARS.forEach((url, index) => {
+    const div = document.createElement('div');
+    div.className = "glass p-6 rounded-3xl cursor-pointer hover:scale-110 transition text-center";
+    div.innerHTML = `<img src="${url}" class="avatar mx-auto" />`;
+    div.onclick = () => {
+      selectedAvatar = url;
+      document.querySelectorAll('#avatarGallery > div').forEach(d => d.classList.remove('ring-4', 'ring-indigo-400'));
+      div.classList.add('ring-4', 'ring-indigo-400');
     };
+    container.appendChild(div);
+  });
+}
+
+function saveSelectedAvatar() {
+  database.ref(`users/${currentUser.uid}`).update({ avatar: selectedAvatar });
+  localStorage.setItem('bxquiz_avatar', selectedAvatar);
+  alert("Avatar guardado");
+  showSection('dashboard');
+}
+
+// ========================================================
+// AVATARES (15)
+const AVATARS = [
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Luna',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Max',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Leo',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Mia',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Noah',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophia',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Lucas',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=James',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Isabella',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Henry',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Charlotte',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Alexander'
+];
+
+// ========================================================
+// INICIALIZACIÓN
+// ========================================================
+window.onload = () => {
+  // Firebase ya inicializado
+};
   </script>
 </body>
 </html>
