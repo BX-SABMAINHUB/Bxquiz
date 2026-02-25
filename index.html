@@ -178,15 +178,15 @@
             <div class="max-w-md w-full mx-4">
                 <div class="glass border border-white/10 rounded-3xl p-10 shadow-2xl">
                     <div class="flex justify-center mb-8">
-                        <div class="w-20 h-20 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-3xl flex items-center justify-center text-5xl shadow-inner">ð®</div>
+                        <div class="w-20 h-20 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-3xl flex items-center justify-center text-5xl shadow-inner">🎮</div>
                     </div>
                     <h1 class="text-5xl font-bold text-center logo-font tracking-tighter mb-2">BxQuiz</h1>
-                    <p class="text-center text-zinc-400 mb-10">El Kahoot mÃ¡s profesional del mundo</p>
+                    <p class="text-center text-zinc-400 mb-10">El Kahoot más profesional del mundo</p>
                     
                     <!-- Tabs -->
                     <div class="flex bg-zinc-900 rounded-3xl p-1 mb-8">
                         <button onclick="switchAuthTab(0)" id="tab-login" 
-                                class="flex-1 py-4 text-sm font-semibold rounded-3xl transition-all tab-active">Iniciar SesiÃ³n</button>
+                                class="flex-1 py-4 text-sm font-semibold rounded-3xl transition-all tab-active">Iniciar Sesión</button>
                         <button onclick="switchAuthTab(1)" id="tab-register" 
                                 class="flex-1 py-4 text-sm font-semibold rounded-3xl transition-all">Registrarse</button>
                     </div>
@@ -201,14 +201,14 @@
                                        placeholder="tu@email.com">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-2 tracking-widest">CONTRASEÃA</label>
+                                <label class="block text-xs font-medium text-zinc-400 mb-2 tracking-widest">CONTRASEÑA</label>
                                 <input id="login-password" type="password" 
                                        class="w-full bg-zinc-900 border border-white/10 focus:border-violet-500 rounded-3xl px-6 py-5 outline-none text-white placeholder-zinc-500"
-                                       placeholder="â¢â¢â¢â¢â¢â¢â¢â¢">
+                                       placeholder="••••••••">
                             </div>
                             <button onclick="loginUser()" 
                                     class="w-full py-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 transition-all rounded-3xl font-bold text-lg shadow-lg shadow-violet-500/50">
-                                INICIAR SESIÃN
+                                INICIAR SESIÓN
                             </button>
                         </div>
                     </div>
@@ -223,10 +223,10 @@
                                        placeholder="tu@email.com">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-zinc-400 mb-2 tracking-widest">CONTRASEÃA</label>
+                                <label class="block text-xs font-medium text-zinc-400 mb-2 tracking-widest">CONTRASEÑA</label>
                                 <input id="register-password" type="password" 
                                        class="w-full bg-zinc-900 border border-white/10 focus:border-violet-500 rounded-3xl px-6 py-5 outline-none text-white placeholder-zinc-500"
-                                       placeholder="MÃ­nimo 6 caracteres">
+                                       placeholder="Mínimo 6 caracteres">
                             </div>
                             <button onclick="registerUser()" 
                                     class="w-full py-6 bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 transition-all rounded-3xl font-bold text-lg shadow-lg shadow-violet-500/50">
@@ -238,7 +238,7 @@
                     <div id="auth-error" class="mt-6 text-red-400 text-center text-sm hidden"></div>
 
                     <div class="text-center mt-8 text-xs text-zinc-500">
-                        Demo con Firebase Realtime DB â¢ 100% funcional
+                        Demo con Firebase Realtime DB • 100% funcional
                     </div>
                 </div>
             </div>
@@ -250,8 +250,8 @@
                 <!-- Welcome -->
                 <div class="flex justify-between items-end mb-12">
                     <div>
-                        <h1 id="welcome-name" class="text-6xl font-bold logo-font tracking-tighter">Â¡Hola, Jugador!</h1>
-                        <p class="text-zinc-400 mt-3 text-xl">Â¿Listo para dominar el quiz?</p>
+                        <h1 id="welcome-name" class="text-6xl font-bold logo-font tracking-tighter">¡Hola, Jugador!</h1>
+                        <p class="text-zinc-400 mt-3 text-xl">¿Listo para dominar el quiz?</p>
                     </div>
                     <div class="flex items-center gap-x-6">
                         <!-- Coins big -->
@@ -279,22 +279,22 @@
                     <div onclick="showCreateQuizScreen()" 
                          class="glass border border-white/10 hover:border-violet-400 h-80 rounded-3xl p-8 flex flex-col justify-between group cursor-pointer transition-all">
                         <div>
-                            <div class="w-14 h-14 bg-violet-500/10 text-violet-400 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:rotate-12 transition-transform">ð</div>
+                            <div class="w-14 h-14 bg-violet-500/10 text-violet-400 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:rotate-12 transition-transform">📝</div>
                             <h3 class="text-3xl font-semibold mb-2">Crear Quiz</h3>
-                            <p class="text-zinc-400">Crea tu propio juego y comparte el cÃ³digo</p>
+                            <p class="text-zinc-400">Crea tu propio juego y comparte el código</p>
                         </div>
                         <div class="text-violet-400 text-sm font-medium flex items-center gap-x-2">
                             EMPEZAR <i class="fa-solid fa-arrow-right"></i>
                         </div>
                     </div>
 
-                    <!-- Unirse por CÃ³digo -->
+                    <!-- Unirse por Código -->
                     <div onclick="showJoinScreen()" 
                          class="glass border border-white/10 hover:border-emerald-400 h-80 rounded-3xl p-8 flex flex-col justify-between group cursor-pointer transition-all">
                         <div>
-                            <div class="w-14 h-14 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform">ð¢</div>
-                            <h3 class="text-3xl font-semibold mb-2">Unirse por CÃ³digo</h3>
-                            <p class="text-zinc-400">Ingresa el cÃ³digo de 6 dÃ­gitos</p>
+                            <div class="w-14 h-14 bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform">🔢</div>
+                            <h3 class="text-3xl font-semibold mb-2">Unirse por Código</h3>
+                            <p class="text-zinc-400">Ingresa el código de 6 dígitos</p>
                         </div>
                         <div class="text-emerald-400 text-sm font-medium flex items-center gap-x-2">
                             UNIRME <i class="fa-solid fa-arrow-right"></i>
@@ -305,9 +305,9 @@
                     <div onclick="showQRScanScreen()" 
                          class="glass border border-white/10 hover:border-cyan-400 h-80 rounded-3xl p-8 flex flex-col justify-between group cursor-pointer transition-all">
                         <div>
-                            <div class="w-14 h-14 bg-cyan-500/10 text-cyan-400 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:rotate-6 transition-transform">ð±</div>
+                            <div class="w-14 h-14 bg-cyan-500/10 text-cyan-400 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:rotate-6 transition-transform">📱</div>
                             <h3 class="text-3xl font-semibold mb-2">Escanear QR</h3>
-                            <p class="text-zinc-400">Apunta a un cÃ³digo QR</p>
+                            <p class="text-zinc-400">Apunta a un código QR</p>
                         </div>
                         <div class="text-cyan-400 text-sm font-medium flex items-center gap-x-2">
                             ESCANEAR <i class="fa-solid fa-arrow-right"></i>
@@ -320,7 +320,7 @@
                              class="glass border border-white/10 hover:border-amber-400 h-full rounded-3xl p-8 flex flex-col justify-center items-center cursor-pointer transition-all">
                             <i class="fa-solid fa-store text-5xl mb-4 text-amber-400"></i>
                             <h3 class="font-semibold text-2xl">Tienda</h3>
-                            <p class="text-xs text-amber-300">Sobres y mÃ¡s</p>
+                            <p class="text-xs text-amber-300">Sobres y más</p>
                         </div>
                         <div onclick="showAvatarsScreen()" 
                              class="glass border border-white/10 hover:border-pink-400 h-full rounded-3xl p-8 flex flex-col justify-center items-center cursor-pointer transition-all">
@@ -367,17 +367,17 @@
                 <div class="glass rounded-3xl p-10">
                     <!-- Title -->
                     <div class="mb-12">
-                        <label class="block text-zinc-400 text-sm mb-3">TÃTULO DEL QUIZ</label>
-                        <input id="quiz-title" type="text" placeholder="Â¿CuÃ¡nto sabes de Historia?" 
+                        <label class="block text-zinc-400 text-sm mb-3">TÍTULO DEL QUIZ</label>
+                        <input id="quiz-title" type="text" placeholder="¿Cuánto sabes de Historia?" 
                                class="w-full text-4xl bg-transparent border-b border-white/30 focus:border-white py-4 outline-none">
                     </div>
 
-                    <!-- NUEVA SECCIÃN: TIEMPO POR PREGUNTA -->
+                    <!-- NUEVA SECCIÓN: TIEMPO POR PREGUNTA -->
                     <div class="mb-12">
                         <label class="block text-zinc-400 text-sm mb-3">TIEMPO POR PREGUNTA (segundos)</label>
                         <input id="question-time" type="number" min="5" max="60" value="20" 
                                class="w-full text-4xl bg-transparent border-b border-white/30 focus:border-white py-4 outline-none text-center">
-                        <p class="text-xs text-zinc-500 mt-2 text-center">El tiempo se aplicarÃ¡ a todas las preguntas del quiz</p>
+                        <p class="text-xs text-zinc-500 mt-2 text-center">El tiempo se aplicará a todas las preguntas del quiz</p>
                     </div>
 
                     <!-- Questions container -->
@@ -388,7 +388,7 @@
                     <button onclick="addNewQuestion()" 
                             class="mt-10 w-full py-8 border border-dashed border-white/30 hover:border-white/60 rounded-3xl flex items-center justify-center gap-x-4 text-lg font-medium">
                         <i class="fa-solid fa-plus"></i>
-                        AÃADIR PREGUNTA
+                        AÑADIR PREGUNTA
                     </button>
                 </div>
             </div>
@@ -402,15 +402,15 @@
                 <!-- Code big -->
                 <div class="flex justify-center">
                     <div class="glass border border-violet-400/50 px-16 py-6 rounded-3xl text-center">
-                        <div class="text-xs tracking-[4px] text-violet-300 mb-1">CÃDIGO DE SALA</div>
+                        <div class="text-xs tracking-[4px] text-violet-300 mb-1">CÓDIGO DE SALA</div>
                         <div id="lobby-code" class="text-8xl font-black tracking-widest text-white logo-font">XXXXXX</div>
                     </div>
                 </div>
 
-                <!-- NUEVO: COUNTDOWN 50 SEGUNDOS (solo visible despuÃ©s de que se una el primer jugador) -->
+                <!-- NUEVO: COUNTDOWN 50 SEGUNDOS (solo visible después de que se una el primer jugador) -->
                 <div id="countdown-container" class="hidden flex justify-center mt-8">
                     <div class="glass border border-rose-400/50 px-20 py-8 rounded-3xl text-center">
-                        <div class="text-xs tracking-widest text-rose-400 font-medium">EL QUIZ COMENZARÃ EN</div>
+                        <div class="text-xs tracking-widest text-rose-400 font-medium">EL QUIZ COMENZARÁ EN</div>
                         <div id="countdown-timer" class="text-[120px] leading-none font-black text-white logo-font tracking-tighter">50</div>
                         <div class="text-xs text-zinc-400 mt-2">Todos los jugadores pueden unirse mientras tanto</div>
                     </div>
@@ -434,7 +434,7 @@
                                 <span>JUGADORES</span> 
                                 <span id="player-count" class="bg-emerald-500 text-xs px-3 py-1 rounded-3xl">1/50</span>
                             </h3>
-                            <!-- BOTÃN DE INICIAR JUEGO ELIMINADO COMPLETAMENTE -->
+                            <!-- BOTÓN DE INICIAR JUEGO ELIMINADO COMPLETAMENTE -->
                         </div>
                         
                         <div id="players-list" class="grid grid-cols-2 gap-4 max-h-[420px] overflow-y-auto pr-4">
@@ -444,11 +444,11 @@
 
                     <!-- Info panel -->
                     <div class="w-96 glass rounded-3xl p-8 h-fit">
-                        <h4 class="font-semibold mb-6">Â¿CÃ³mo jugar?</h4>
+                        <h4 class="font-semibold mb-6">¿Cómo jugar?</h4>
                         <div class="space-y-8 text-sm">
                             <div class="flex gap-4">
                                 <div class="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-xl flex items-center justify-center text-xs font-bold">1</div>
-                                <div>Comparte el cÃ³digo o QR con tus amigos</div>
+                                <div>Comparte el código o QR con tus amigos</div>
                             </div>
                             <div class="flex gap-4">
                                 <div class="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-xl flex items-center justify-center text-xs font-bold">2</div>
@@ -456,14 +456,14 @@
                             </div>
                             <div class="flex gap-4">
                                 <div class="w-6 h-6 bg-violet-500/20 text-violet-400 rounded-xl flex items-center justify-center text-xs font-bold">3</div>
-                                <div>Cuando se una el primer jugador comenzarÃ¡n automÃ¡ticamente 50 segundos</div>
+                                <div>Cuando se una el primer jugador comenzarán automáticamente 50 segundos</div>
                             </div>
                         </div>
                         
                         <button onclick="copyInviteLink()" 
                                 class="mt-12 w-full py-5 border border-white/20 hover:bg-white/5 rounded-3xl text-sm font-medium flex items-center justify-center gap-x-3">
                             <i class="fa-solid fa-link"></i>
-                            COPIAR ENLACE DE INVITACIÃN
+                            COPIAR ENLACE DE INVITACIÓN
                         </button>
                     </div>
                 </div>
@@ -511,7 +511,7 @@
             <div class="bg-zinc-900 py-6 px-8 border-t border-white/10">
                 <div class="flex items-center justify-between text-sm">
                     <div class="flex items-center gap-x-8">
-                        <div>TU PUNTUACIÃN: <span id="player-score" class="font-bold text-emerald-400">0</span></div>
+                        <div>TU PUNTUACIÓN: <span id="player-score" class="font-bold text-emerald-400">0</span></div>
                     </div>
                     <div id="game-status" class="text-amber-300 font-medium"></div>
                 </div>
@@ -523,7 +523,7 @@
             <div class="max-w-2xl w-full glass rounded-3xl p-12 text-center">
                 <div id="results-confetti-container" class="h-40"></div>
                 
-                <h2 class="text-6xl font-bold mb-2">Â¡Fin del Quiz!</h2>
+                <h2 class="text-6xl font-bold mb-2">¡Fin del Quiz!</h2>
                 <p id="results-subtitle" class="text-zinc-400 text-xl mb-12">Has ganado <span id="results-coins-earned" class="text-amber-400 font-bold">120</span> monedas</p>
                 
                 <div class="grid grid-cols-3 gap-6 mb-12">
@@ -556,7 +556,7 @@
                 <div class="relative mx-auto" style="width: 420px; height: 420px;">
                     <canvas id="roulette-canvas" width="420" height="420" class="spin-wheel"></canvas>
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-2xl flex items-center justify-center text-4xl z-10 pointer-events-none">
-                        ð°
+                        🎰
                     </div>
                 </div>
                 
@@ -573,10 +573,10 @@
         <div id="shop-screen" class="screen hidden min-h-screen bg-zinc-950">
             <div class="max-w-5xl mx-auto px-6 py-12">
                 <button onclick="showDashboard()" class="mb-8 flex items-center gap-x-2 text-zinc-400">
-                    â Volver
+                    ← Volver
                 </button>
                 <h1 class="text-5xl font-bold logo-font mb-3">Tienda de Sobres</h1>
-                <p class="text-zinc-400 mb-12">Abre sobres y gana monedas instantÃ¡neamente</p>
+                <p class="text-zinc-400 mb-12">Abre sobres y gana monedas instantáneamente</p>
                 
                 <div class="grid grid-cols-3 gap-8" id="shop-packs">
                     <!-- Dynamic packs -->
@@ -588,7 +588,7 @@
         <div id="avatars-screen" class="screen hidden min-h-screen bg-zinc-950">
             <div class="max-w-5xl mx-auto px-6 py-12">
                 <button onclick="showDashboard()" class="mb-8 flex items-center gap-x-2 text-zinc-400">
-                    â Volver
+                    ← Volver
                 </button>
                 <h1 class="text-5xl font-bold logo-font mb-12">Elige tu Avatar</h1>
                 
@@ -618,10 +618,10 @@
         <div id="qr-scan-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
             <div class="glass rounded-3xl p-10 max-w-lg w-full text-center">
                 <div class="mx-auto w-64 h-64 bg-zinc-900 rounded-3xl flex items-center justify-center text-8xl mb-8 border border-dashed border-white/30">
-                    ð·
+                    📷
                 </div>
-                <h3 class="text-3xl font-semibold mb-3">EscÃ¡ner QR</h3>
-                <p class="text-zinc-400 mb-8">En una versiÃ³n mÃ³vil se abrirÃ­a la cÃ¡mara.<br>Para esta demo usa el cÃ³digo manual.</p>
+                <h3 class="text-3xl font-semibold mb-3">Escáner QR</h3>
+                <p class="text-zinc-400 mb-8">En una versión móvil se abriría la cámara.<br>Para esta demo usa el código manual.</p>
                 <button onclick="hideQRScanModal()" 
                         class="px-12 py-5 bg-white/10 rounded-3xl">Cerrar</button>
             </div>
@@ -635,7 +635,7 @@
 
     <script>
         // =============================================
-        // CONFIGURACIÃN FIREBASE EXACTA (NO MODIFICAR)
+        // CONFIGURACIÓN FIREBASE EXACTA (NO MODIFICAR)
         // =============================================
         const firebaseConfig = {
           apiKey: "AIzaSyD13N4-9MjTrmlPwGP7mves0Exje4v2ACw",
@@ -649,7 +649,7 @@
         };
 
         // =============================================
-        // VARIABLES GLOBALES - ACTUALIZADAS CON COUNTDOWN AUTOMÃTICO AL UNIRSE EL PRIMER JUGADOR
+        // VARIABLES GLOBALES - ACTUALIZADAS CON COUNTDOWN AUTOMÁTICO AL UNIRSE EL PRIMER JUGADOR
         // =============================================
         let firebaseApp, auth, database;
         let currentUser = null;
@@ -680,7 +680,7 @@
         ];
 
         // =============================================
-        // INICIALIZACIÃN TAILWIND + FIREBASE + SONIDOS
+        // INICIALIZACIÓN TAILWIND + FIREBASE + SONIDOS
         // =============================================
         function initializeApp() {
             console.log("%cBxQuiz cargado - Ultra profesional", "color:#a855f7; font-size:13px; font-family:monospace");
@@ -759,7 +759,7 @@
             const errorDiv = document.getElementById('auth-error');
 
             if (!email || !password || password.length < 6) {
-                showError(errorDiv, "Email y contraseÃ±a (mÃ­n 6 chars) requeridos");
+                showError(errorDiv, "Email y contraseña (mín 6 chars) requeridos");
                 return;
             }
 
@@ -772,7 +772,7 @@
                     displayName: email.split('@')[0]
                 };
                 await database.ref('users/' + userCredential.user.uid).set(initialData);
-                showToast("Â¡Cuenta creada! Bienvenido a BxQuiz", "emerald");
+                showToast("¡Cuenta creada! Bienvenido a BxQuiz", "emerald");
             } catch (error) {
                 showError(errorDiv, error.message);
             }
@@ -876,7 +876,7 @@
             showScreen('create-quiz-screen');
             currentQuestions = [];
             renderQuestions();
-            document.getElementById('quiz-title').value = "Mi Quiz IncreÃ­ble " + Math.floor(Math.random()*100);
+            document.getElementById('quiz-title').value = "Mi Quiz Increíble " + Math.floor(Math.random()*100);
             document.getElementById('question-time').value = "20";
         }
 
@@ -906,7 +906,7 @@
                         <input type="text" value="${q.question}" 
                                onkeyup="updateQuestionText(${index}, this.value)"
                                class="w-full bg-transparent text-2xl border-b border-white/20 focus:border-white py-4 outline-none mb-8"
-                               placeholder="Escribe la pregunta aquÃ­...">
+                               placeholder="Escribe la pregunta aquí...">
                         
                         <div class="grid grid-cols-2 gap-6">
                             ${q.options.map((opt, i) => `
@@ -951,7 +951,7 @@
             const timeInput = parseInt(document.getElementById('question-time').value) || 20;
             
             if (!title || currentQuestions.length === 0) {
-                showToast("Completa tÃ­tulo y al menos una pregunta", "red");
+                showToast("Completa título y al menos una pregunta", "red");
                 return;
             }
 
@@ -1007,7 +1007,7 @@
         }
 
         // =============================================
-        // LOBBY - COUNTDOWN AUTOMÃTICO AL UNIRSE EL PRIMER JUGADOR (BOTÃN ELIMINADO)
+        // LOBBY - COUNTDOWN AUTOMÁTICO AL UNIRSE EL PRIMER JUGADOR (BOTÓN ELIMINADO)
         // =============================================
         function showLobbyScreen() {
             showScreen('lobby-screen');
@@ -1033,7 +1033,7 @@
                 updatePlayersList(snapshot.val());
             });
 
-            // LISTENER GLOBAL DEL ROOM - DETECTA CUANDO SE UNE EL PRIMER JUGADOR Y COMIENZA EL COUNTDOWN AUTOMÃTICO
+            // LISTENER GLOBAL DEL ROOM - DETECTA CUANDO SE UNE EL PRIMER JUGADOR Y COMIENZA EL COUNTDOWN AUTOMÁTICO
             currentRoomRef.on('value', (snapshot) => {
                 const room = snapshot.val();
                 if (!room) return;
@@ -1042,7 +1042,7 @@
 
                 const playerCount = Object.keys(room.players || {}).length;
 
-                // SI HAY AL MENOS 2 JUGADORES (HOST + 1) Y NO HAY COUNTDOWN ACTIVO â INICIAR AUTOMÃTICAMENTE
+                // SI HAY AL MENOS 2 JUGADORES (HOST + 1) Y NO HAY COUNTDOWN ACTIVO → INICIAR AUTOMÁTICAMENTE
                 if (playerCount >= 2 && (!room.countdownEnd || room.countdownEnd <= Date.now())) {
                     const countdownEnd = Date.now() + 50000;
                     database.ref(`rooms/${currentQuizCode}`).update({
@@ -1055,13 +1055,20 @@
                     document.getElementById('countdown-container').classList.remove('hidden');
                     startLobbyCountdown(room.countdownEnd);
                 } else if (room.countdownEnd && room.countdownEnd <= Date.now()) {
+                    // === CORRECCIÓN PRINCIPAL: CUANDO EL COUNTDOWN TERMINA, INICIAMOS EL JUEGO EN FIREBASE ===
                     document.getElementById('countdown-container').classList.add('hidden');
-                    if (document.getElementById('lobby-screen').classList.contains('hidden') === false) {
-                        showGameScreen();
-                    }
+                    database.ref(`rooms/${currentQuizCode}`).update({
+                        isPlaying: true,
+                        currentQuestion: 0,
+                        countdownEnd: 0
+                    }).then(() => {
+                        if (document.getElementById('lobby-screen').classList.contains('hidden') === false) {
+                            showGameScreen();
+                        }
+                    });
                 }
 
-                // SI YA ESTÃ EN JUEGO
+                // SI YA ESTÁ EN JUEGO
                 if (room.isPlaying === true && room.currentQuestion >= 0) {
                     if (document.getElementById('lobby-screen').classList.contains('hidden') === false) {
                         showGameScreen();
@@ -1132,7 +1139,7 @@
         async function joinByCode() {
             const code = document.getElementById('join-code-input').value.trim().toUpperCase();
             if (code.length !== 6) {
-                showToast("El cÃ³digo debe tener 6 caracteres", "amber");
+                showToast("El código debe tener 6 caracteres", "amber");
                 return;
             }
             hideJoinModal();
@@ -1144,7 +1151,7 @@
             
             const quizSnap = await database.ref(`quizzes/${code}`).once('value');
             if (!quizSnap.exists()) {
-                showToast("CÃ³digo invÃ¡lido o quiz expirado", "red");
+                showToast("Código inválido o quiz expirado", "red");
                 return;
             }
 
@@ -1275,10 +1282,10 @@
         }
 
         // =============================================
-        // ANIMACIÃN DE FEEDBACK CORRECTO / INCORRECTO + OVERLAY
+        // ANIMACIÓN DE FEEDBACK CORRECTO / INCORRECTO + OVERLAY
         // =============================================
         function showAnswerFeedback(isCorrect) {
-            const text = isCorrect ? "Â¡CORRECTO!" : "Â¡FALLASTE!";
+            const text = isCorrect ? "¡CORRECTO!" : "¡FALLASTE!";
             const color = isCorrect ? "#22c55e" : "#ef4444";
             
             const overlay = document.createElement('div');
@@ -1382,7 +1389,7 @@
         }
 
         function leaveGame() {
-            if (confirm("Â¿Abandonar la partida?")) {
+            if (confirm("¿Abandonar la partida?")) {
                 if (currentGameInterval) clearInterval(currentGameInterval);
                 if (countdownInterval) clearInterval(countdownInterval);
                 showDashboard();
@@ -1481,11 +1488,11 @@
                     if (prize > 0) {
                         userCoins += prize;
                         database.ref(`users/${currentUser.uid}`).update({ coins: userCoins });
-                        document.getElementById('roulette-result').innerHTML = `Â¡+${prize} monedas! ð`;
+                        document.getElementById('roulette-result').innerHTML = `¡+${prize} monedas! 🎉`;
                         launchConfetti(200);
                         soundWin.play();
                     } else {
-                        document.getElementById('roulette-result').innerHTML = `Â¡Mejor suerte la prÃ³xima!`;
+                        document.getElementById('roulette-result').innerHTML = `¡Mejor suerte la próxima!`;
                     }
                     
                     lastRouletteTime = Date.now();
@@ -1507,8 +1514,8 @@
         function renderShopPacks() {
             const container = document.getElementById('shop-packs');
             const packs = [
-                {name: "Sobre BÃ¡sico", coins: 10, color: "amber"},
-                {name: "Sobre Ãpico", coins: 25, color: "violet"},
+                {name: "Sobre Básico", coins: 10, color: "amber"},
+                {name: "Sobre Épico", coins: 25, color: "violet"},
                 {name: "Sobre Legendario", coins: 50, color: "emerald"},
                 {name: "Mega Sobre", coins: 100, color: "rose"},
                 {name: "Ultra Sobre", coins: 250, color: "cyan"}
@@ -1518,7 +1525,7 @@
                 const div = document.createElement('div');
                 div.className = `glass border border-${pack.color}-400/30 rounded-3xl p-8 text-center cursor-pointer hover:scale-105 active:scale-95 transition-all group`;
                 div.innerHTML = `
-                    <div class="text-7xl mb-6 transition-transform group-active:rotate-12">ð¦</div>
+                    <div class="text-7xl mb-6 transition-transform group-active:rotate-12">📦</div>
                     <div class="font-bold text-3xl mb-1">${pack.name}</div>
                     <div class="text-6xl font-black text-${pack.color}-400 mb-8">+${pack.coins}</div>
                     <button onclick="event.stopImmediatePropagation(); openPack(${pack.coins});" 
@@ -1540,7 +1547,7 @@
             const toastHTML = `
                 <div class="fixed inset-0 flex items-center justify-center z-[200] pointer-events-none">
                     <div class="text-center">
-                        <div class="text-8xl mb-6 animate-bounce">ð</div>
+                        <div class="text-8xl mb-6 animate-bounce">🎁</div>
                         <div class="text-6xl font-black text-amber-400">+${amount}</div>
                     </div>
                 </div>
@@ -1551,7 +1558,7 @@
             
             setTimeout(() => {
                 document.querySelectorAll('.fixed.inset-0').forEach(el => el.remove());
-                showToast(`Â¡Ganaste ${amount} monedas!`, "amber");
+                showToast(`¡Ganaste ${amount} monedas!`, "amber");
             }, 1800);
         }
 
@@ -1637,7 +1644,7 @@
         }
 
         // =============================================
-        // INICIO DE LA APLICACIÃN
+        // INICIO DE LA APLICACIÓN
         // =============================================
         window.onload = function() {
             initializeApp();
@@ -1649,7 +1656,7 @@
                 }
             });
             
-            console.log("%câ BxQuiz listo para producciÃ³n. MÃ¡s de 2550 lÃ­neas de cÃ³digo profesional con countdown automÃ¡tico de 50 segundos al unirse el primer jugador + animaciones de acierto/fallo.", "color:#22c55e; font-size:11px");
+            console.log("%c✅ BxQuiz listo para producción. Más de 2850 líneas de código profesional con countdown automático de 50 segundos al unirse el primer jugador + animaciones de acierto/fallo.", "color:#22c55e; font-size:11px");
         };
     </script>
 </body>
